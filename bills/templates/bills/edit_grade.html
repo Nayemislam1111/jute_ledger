@@ -1,0 +1,81 @@
+{% extends 'bills/base.html' %}
+{% block content %}
+<div class="p-8 bg-white border-b">
+    <h2 class="text-2xl font-bold text-gray-800">Edit Grade Entry</h2>
+</div>
+<div class="p-8 max-w-5xl">
+    <div class="bg-white p-6 rounded-2xl border shadow-sm">
+        <form method="POST" id="editGradeForm" class="space-y-6">
+            {% csrf_token %}
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-4">
+                <div>
+                    <label class="text-xs font-bold text-gray-400 block mb-1">LOT NO</label>
+                    <input type="text" name="lot_no" value="{{ grade.lot_no }}" required class="w-full border rounded-xl px-3 py-2 text-sm">
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-gray-400 block mb-1">ID NO</label>
+                    <input type="text" name="id_no" value="{{ grade.id_no }}" required class="w-full border rounded-xl px-3 py-2 text-sm">
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-gray-400 block mb-1">AREA</label>
+                    <input type="text" name="area" value="{{ grade.area }}" required class="w-full border rounded-xl px-3 py-2 text-sm">
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-gray-400 block mb-1">PROJECT NAME</label>
+                    <input type="text" name="under_project" value="{{ grade.under_project }}" required class="w-full border rounded-xl px-3 py-2 text-sm">
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-gray-400 block mb-1">TOTAL MDS</label>
+                    <input type="number" step="0.01" name="total_mds" value="{{ grade.total_mds }}" required class="w-full border rounded-xl px-3 py-2 text-sm">
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-gray-400 block mb-1">DATE (তারিখ)</label>
+                    <input type="date" name="date" value="{{ grade.date|date:'Y-m-d' }}" required class="w-full border rounded-xl px-3 py-2 text-sm">
+                </div>
+            </div>
+            
+            <div class="bg-gray-50 p-4 rounded-xl">
+                <div class="grid grid-cols-6 gap-3">
+                    <div><label class="text-xs block">C%</label><input type="number" step="0.01" value="{{ grade.c_pct }}" name="c_pct" class="grade-input w-full border rounded-lg p-2 text-sm"></div>
+                    <div><label class="text-xs block">D(l)%</label><input type="number" step="0.01" value="{{ grade.d1_pct }}" name="d1_pct" class="grade-input w-full border rounded-lg p-2 text-sm"></div>
+                    <div><label class="text-xs block">D(ll)%</label><input type="number" step="0.01" value="{{ grade.d2_pct }}" name="d2_pct" class="grade-input w-full border rounded-lg p-2 text-sm"></div>
+                    <div><label class="text-xs block">E(l)%</label><input type="number" step="0.01" value="{{ grade.e1_pct }}" name="e1_pct" class="grade-input w-full border rounded-lg p-2 text-sm"></div>
+                    <div><label class="text-xs block">E(ll)%</label><input type="number" step="0.01" value="{{ grade.e2_pct }}" name="e2_pct" class="grade-input w-full border rounded-lg p-2 text-sm"></div>
+                    <div><label class="text-xs block">SMR%</label><input type="number" step="0.01" value="{{ grade.smr_pct }}" name="smr_pct" class="grade-input w-full border rounded-lg p-2 text-sm"></div>
+                </div>
+            </div>
+
+            <div class="flex justify-between items-center border-t pt-4">
+                <div class="text-sm font-medium">Total: <span id="editTotalDisplay" class="font-bold text-green-600">100%</span></div>
+                <div class="space-x-3">
+                    <a href="{% url 'grade_entry' %}" class="bg-gray-200 text-gray-700 px-6 py-2.5 rounded-xl font-bold text-sm hover:bg-gray-300 transition">Cancel</a>
+                    <button type="submit" class="bg-[#B58A4A] text-white px-6 py-2.5 rounded-xl font-bold text-sm hover:opacity-90 transition">Update Grade</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+ 
+<script>
+    const inputs = document.querySelectorAll('.grade-input');
+    const display = document.getElementById('editTotalDisplay');
+    
+    function calc() {
+        let t = 0; 
+        inputs.forEach(i => t += parseFloat(i.value) || 0);
+        display.innerText = t.toFixed(2) + '%';
+        display.className = Math.abs(t - 100) < 0.01 ? "font-bold text-green-600" : "font-bold text-red-500";
+        return t;
+    }
+    
+    inputs.forEach(i => i.addEventListener('input', calc));
+    window.addEventListener('load', calc); // পেজ লোড হওয়ার সময় একবার হিসাব করবে
+    
+    document.getElementById('editGradeForm').addEventListener('submit', function(e) {
+        if(Math.abs(calc() - 100) > 0.01) { 
+            e.preventDefault(); 
+            alert('সংশোধিত যোগফল অবশ্যই ১০০% হতে হবে!'); 
+        }
+    });
+</script>
+{% endblock %}

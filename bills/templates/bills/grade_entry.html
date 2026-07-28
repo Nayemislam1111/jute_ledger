@@ -1,0 +1,258 @@
+{% extends 'bills/base.html' %}
+{% block content %}
+
+<div class="p-8 bg-white border-b border-gray-200/80 flex flex-col md:flex-row md:items-center md:justify-between gap-4 shadow-sm">
+    <div>
+        <h2 class="text-2xl font-black text-gray-800 tracking-tight flex items-center gap-2">
+            <i class="fa-solid fa-layer-group text-[#B58A4A]"></i> Grade Entry
+        </h2>
+    </div>
+</div>
+
+<div class="p-8 space-y-8 bg-gradient-to-b from-[#F9F9F6] to-[#F4F3EF] min-h-[calc(100vh-110px)]"> 
+    
+    <div class="bg-white p-6 rounded-2xl border border-gray-200/70 shadow-sm max-w-5xl relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-full h-1 bg-[#B58A4A]"></div>
+        <h3 class="text-sm font-black text-gray-800 tracking-wide uppercase mb-5 flex items-center gap-2">
+            <i class="fa-solid fa-plus text-[#B58A4A]"></i> Create New Grade Entry
+        </h3>
+
+        <form method="POST" id="gradeForm" class="space-y-6">
+            {% csrf_token %}
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
+                <div>
+                    <label class="text-[10px] font-extrabold text-gray-400 block mb-1.5 uppercase tracking-wider">LOT NO</label>
+                    <input type="text" name="lot_no" required class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-xs font-bold text-gray-700 bg-gray-50/30 focus:outline-none focus:ring-2 focus:ring-[#B58A4A]/20 focus:border-[#B58A4A] transition">
+                </div>
+                <div>
+                    <label class="text-[10px] font-extrabold text-gray-400 block mb-1.5 uppercase tracking-wider">ID NO</label>
+                    <input type="text" name="id_no" required class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-xs font-bold text-gray-700 bg-gray-50/30 focus:outline-none focus:ring-2 focus:ring-[#B58A4A]/20 focus:border-[#B58A4A] transition">
+                </div>
+                <div>
+                    <label class="text-[10px] font-extrabold text-gray-400 block mb-1.5 uppercase tracking-wider">AREA</label>
+                    <input type="text" name="area" id="grade_area" required class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-xs font-bold text-gray-700 bg-gray-50/30 focus:outline-none focus:ring-2 focus:ring-[#B58A4A]/20 focus:border-[#B58A4A] transition">
+                </div>
+                <div>
+                    <label class="text-[10px] font-extrabold text-gray-400 block mb-1.5 uppercase tracking-wider">PROJECT NAME</label>
+                    <input type="text" name="under_project" required class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-xs font-bold text-gray-700 bg-gray-50/30 focus:outline-none focus:ring-2 focus:ring-[#B58A4A]/20 focus:border-[#B58A4A] transition">
+                </div>
+                <div>
+                    <label class="text-[10px] font-extrabold text-gray-400 block mb-1.5 uppercase tracking-wider">TOTAL MDS (মোট মণ)</label>
+                    <input type="number" step="0.01" name="total_mds" required class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-xs font-bold text-gray-700 bg-gray-50/30 focus:outline-none focus:ring-2 focus:ring-[#B58A4A]/20 focus:border-[#B58A4A] transition" value="0">
+                </div>
+                <div>
+                    <label class="text-[10px] font-extrabold text-gray-400 block mb-1.5 uppercase tracking-wider">DATE</label>
+                    <input type="date" name="date" id="grade_date" required class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-xs font-bold text-gray-700 bg-gray-50/30 focus:outline-none focus:ring-2 focus:ring-[#B58A4A]/20 focus:border-[#B58A4A] transition">
+                </div>
+            </div>
+
+            <div id="rate-display-box" class="hidden bg-amber-50/60 border border-amber-200/80 p-4 rounded-2xl transition-all duration-300 shadow-inner">
+                <strong class="text-xs font-extrabold text-amber-800 block mb-3 flex items-center gap-1.5">
+                    <i class="fa-solid fa-location-dot"></i> Area (Base Rate):
+                </strong>
+                <div id="rates-text" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 text-xs font-bold text-center text-gray-700"></div>
+            </div>
+
+            <div class="bg-gray-50/60 p-5 rounded-2xl border border-gray-100">
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+                    <div>
+                        <label class="text-[11px] font-extrabold text-blue-600 block mb-1.5 uppercase tracking-wider">C %</label>
+                        <input type="number" step="0.01" value="0" name="c_pct" class="grade-input w-full border border-gray-200 rounded-xl px-3 py-2 text-xs font-bold text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition">
+                    </div>
+                    <div>
+                        <label class="text-[11px] font-extrabold text-slate-700 block mb-1.5 uppercase tracking-wider">D(1) %</label>
+                        <input type="number" step="0.01" value="0" name="d1_pct" class="grade-input w-full border border-gray-200 rounded-xl px-3 py-2 text-xs font-bold text-gray-700 focus:outline-none focus:ring-2 focus:ring-slate-500/20 focus:border-slate-500 transition">
+                    </div>
+                    <div>
+                        <label class="text-[11px] font-extrabold text-emerald-600 block mb-1.5 uppercase tracking-wider">D(2) %</label>
+                        <input type="number" step="0.01" value="0" name="d2_pct" class="grade-input w-full border border-gray-200 rounded-xl px-3 py-2 text-xs font-bold text-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition">
+                    </div>
+                    <div>
+                        <label class="text-[11px] font-extrabold text-rose-500 block mb-1.5 uppercase tracking-wider">E(1) %</label>
+                        <input type="number" step="0.01" value="0" name="e1_pct" class="grade-input w-full border border-gray-200 rounded-xl px-3 py-2 text-xs font-bold text-gray-700 focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition">
+                    </div>
+                    <div>
+                        <label class="text-[11px] font-extrabold text-amber-600 block mb-1.5 uppercase tracking-wider">E(2) %</label>
+                        <input type="number" step="0.01" value="0" name="e2_pct" class="grade-input w-full border border-gray-200 rounded-xl px-3 py-2 text-xs font-bold text-gray-700 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition">
+                    </div>
+                    <div>
+                        <label class="text-[11px] font-extrabold text-cyan-600 block mb-1.5 uppercase tracking-wider">SMR %</label>
+                        <input type="number" step="0.01" value="0" name="smr_pct" class="grade-input w-full border border-gray-200 rounded-xl px-3 py-2 text-xs font-bold text-gray-700 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:border-cyan-500 transition">
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-between items-center border-t border-gray-100 pt-4">
+                <div class="text-xs font-extrabold text-gray-400 uppercase tracking-wider">
+                    Total Add: <span id="totalPercentageDisplay" class="text-base font-black text-red-500 ml-1">0%</span>
+                </div>
+                <button type="submit" class="bg-[#B58A4A] text-white px-6 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider hover:bg-[#9E753B] transition-all shadow-md shadow-[#B58A4A]/20 flex items-center gap-2">
+                    <i class="fa-solid fa-floppy-disk"></i> Save Grade Entry
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div class="bg-white rounded-2xl border border-gray-200/70 shadow-sm overflow-hidden max-w-5xl">
+        <div class="p-5 border-b border-gray-100 bg-gray-50/50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <h3 class="font-black text-gray-800 text-sm tracking-wide uppercase flex items-center gap-2">
+                <i class="fa-solid fa-list text-gray-400"></i> All (Grade Entries)
+            </h3>
+            
+            <div class="flex items-center gap-2 w-full sm:max-w-md justify-end">
+                <form method="GET" action="{% url 'grade_entry' %}" class="flex items-center gap-2 w-full">
+                    <div class="relative w-full">
+                        <input type="text" name="search_query" value="{{ search_query|default:'' }}" 
+                               class="w-full border border-gray-200 bg-white rounded-xl pl-4 pr-10 py-2 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-[#B58A4A]/20 focus:border-[#B58A4A] transition placeholder:text-gray-400" 
+                               placeholder="Lot, ID, Area বা Project দিয়ে খুঁজুন...">
+                        <button type="submit" class="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600">
+                            <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                        </button>
+                    </div>
+                    {% if search_query %}
+                        <a href="{% url 'grade_entry' %}" class="text-[11px] bg-gray-100 border text-gray-600 px-3 py-2 rounded-xl font-bold hover:bg-gray-200 transition whitespace-nowrap">
+                            রিসেট
+                        </a>
+                    {% endif %}
+                </form>
+
+                <a href="{% url 'export_grades_csv' %}?search_query={{ search_query|default:'' }}" class="bg-emerald-600 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-emerald-700 transition flex items-center gap-1.5 whitespace-nowrap shadow-md shadow-emerald-600/10">
+                    <i class="fa-solid fa-file-csv text-sm"></i> Export CSV
+                </a>
+            </div>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="border-b border-gray-200/80 text-[11px] font-black text-gray-400 uppercase tracking-wider bg-gray-50">
+                        <th class="py-4 px-4">Date</th>
+                        <th class="py-4 px-4">Lot No</th>
+                        <th class="py-4 px-4">ID No</th>
+                        <th class="py-4 px-4">Area</th>
+                        <th class="py-4 px-4">Project</th>
+                        <th class="py-4 px-4 text-center">Total Mds</th>
+                        <th class="py-4 px-4 text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="text-xs text-gray-600 divide-y divide-gray-100 font-medium">
+                    {% for grade in grades %}
+                    <tr class="hover:bg-slate-50/80 transition duration-150">
+                        <td class="py-3.5 px-4 font-bold text-gray-500">{{ grade.date|date:"d-m-Y" }}</td>
+                        <td class="py-3.5 px-4 font-bold text-slate-700">{{ grade.lot_no }}</td>
+                        <td class="py-3.5 px-4 font-bold text-gray-500">{{ grade.id_no }}</td>
+                        <td class="py-3.5 px-4 font-semibold text-gray-800">{{ grade.area }}</td>
+                        <td class="py-3.5 px-4 font-bold text-gray-600">{{ grade.under_project }}</td>
+                        <td class="py-3.5 px-4 text-center font-black text-slate-800">{{ grade.total_mds }}</td>
+                        <td class="py-3.5 px-4 text-center space-x-2">
+                            <a href="{% url 'edit_grade' grade.id %}" class="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-2.5 py-1.5 rounded-lg font-bold transition">
+                                <i class="fa-regular fa-pen-to-square text-[11px]"></i> Edit
+                            </a>
+                            <a href="{% url 'delete_grade' grade.id %}" onclick="return confirm('আপনি কি নিশ্চিত এটি ডিলিট করতে চান?')" class="inline-flex items-center gap-1 text-red-600 hover:text-red-800 bg-red-50 hover:bg-red-100 px-2.5 py-1.5 rounded-lg font-bold transition">
+                                <i class="fa-regular fa-trash-can text-[11px]"></i> Delete
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="py-8 text-center text-gray-400 font-bold bg-gray-50/30">
+                            <div class="flex flex-col items-center justify-center space-y-2">
+                                <i class="fa-solid fa-folder-open text-2xl text-gray-300"></i>
+                                <span class="text-xs">No Grade Here</span>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ভিউ থেকে পাঠানো এরিয়া ও একাধিক কার্যকর তারিখের রেট লিস্ট 
+    const areaRates = {{ rates_json|safe }};
+    const areaInput = document.getElementById('grade_area');
+    const dateInput = document.getElementById('grade_date');
+    const displayBox = document.getElementById('rate-display-box');
+    const ratesText = document.getElementById('rates-text');
+
+    function showRates() {
+        const selectedArea = areaInput.value.trim().toLowerCase();
+        const selectedDate = dateInput.value; // YYYY-MM-DD ফরম্যাট
+        
+        if (selectedArea && selectedDate && areaRates[selectedArea]) {
+            const ratesList = areaRates[selectedArea];
+            let activeRate = null;
+            
+            // 🎯 লজিক: সিলেক্ট করা তারিখের চেয়ে ছোট বা সমান (<=) সবচেয়ে কাছের কার্যকর রেটটি খোঁজা হচ্ছে
+            for (let i = 0; i < ratesList.length; i++) {
+                if (ratesList[i].effect_date <= selectedDate) {
+                    activeRate = ratesList[i];
+                    break; // যেহেতু ব্যাকএন্ডে '-effect_date' দিয়ে সর্ট করা আছে, তাই প্রথম মিলটিই সবচেয়ে লেটেস্ট হবে
+                }
+            }
+            
+            // যদি সিলেক্ট করা তারিখের পূর্বে কোনো রেট না পাওয়া যায়, তবে সবচেয়ে পুরনো রেটটি ডিফল্ট ধরবে
+            if (!activeRate && ratesList.length > 0) {
+                activeRate = ratesList[ratesList.length - 1]; 
+            }
+            
+            if (activeRate) {
+                ratesText.innerHTML = `
+                    <div class="bg-white p-2.5 rounded-xl border border-gray-100 shadow-sm"><span class="text-gray-400 block text-[10px] font-extrabold uppercase">C</span><span class="text-blue-600 font-black">৳${activeRate.c}</span></div>
+                    <div class="bg-white p-2.5 rounded-xl border border-gray-100 shadow-sm"><span class="text-gray-400 block text-[10px] font-extrabold uppercase">D1</span><span class="text-slate-600 font-black">৳${activeRate.d1}</span></div>
+                    <div class="bg-white p-2.5 rounded-xl border border-gray-100 shadow-sm"><span class="text-gray-400 block text-[10px] font-extrabold uppercase">D2</span><span class="text-emerald-600 font-black">৳${activeRate.d2}</span></div>
+                    <div class="bg-white p-2.5 rounded-xl border border-gray-100 shadow-sm"><span class="text-gray-400 block text-[10px] font-extrabold uppercase">E1</span><span class="text-red-500 font-black">৳${activeRate.e1}</span></div>
+                    <div class="bg-white p-2.5 rounded-xl border border-gray-100 shadow-sm"><span class="text-gray-400 block text-[10px] font-extrabold uppercase">E2</span><span class="text-amber-600 font-black">৳${activeRate.e2}</span></div>
+                    <div class="bg-white p-2.5 rounded-xl border border-gray-100 shadow-sm"><span class="text-gray-400 block text-[10px] font-extrabold uppercase">SMR</span><span class="text-cyan-600 font-black">৳${activeRate.smr}</span></div>
+                `;
+                displayBox.classList.remove('hidden');
+            } else {
+                displayBox.classList.add('hidden');
+            }
+        } else {
+            displayBox.classList.add('hidden');
+        }
+    }
+
+    // এরিয়া এবং তারিখ দুটোর যেকোনো একটি পরিবর্তন হলেই রেট আপডেট হবে 🎯
+    if (areaInput) {
+        areaInput.addEventListener('input', showRates);
+        areaInput.addEventListener('change', showRates);
+    }
+    if (dateInput) {
+        dateInput.addEventListener('change', showRates);
+    }
+
+    // ফিক্স করা ক্যালকুলেশন স্ক্রিপ্ট
+    const inputs = document.querySelectorAll('.grade-input');
+    const display = document.getElementById('totalPercentageDisplay');
+    
+    function calc() {
+        let t = 0; 
+        inputs.forEach(i => t += parseFloat(i.value) || 0);
+        
+        let formattedTotal = parseFloat(t.toFixed(2));
+        display.innerText = formattedTotal.toFixed(2) + '%';
+        
+        if (formattedTotal === 100) {
+            display.className = "text-base font-black text-emerald-600 ml-1";
+        } else {
+            display.className = "text-base font-black text-red-500 ml-1";
+        }
+        
+        return formattedTotal;
+    }
+    
+    inputs.forEach(i => i.addEventListener('input', calc));
+    
+    document.getElementById('gradeForm').addEventListener('submit', function(e) {
+        if(calc() !== 100) { 
+            e.preventDefault(); 
+            alert('Total Add Must Be 100%'); 
+        }
+    });
+</script>
+{% endblock %}

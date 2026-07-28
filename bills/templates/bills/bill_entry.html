@@ -1,0 +1,145 @@
+{% extends 'bills/base.html' %}
+{% block content %}
+
+<div class="p-8 bg-white border-b border-gray-200/80 flex flex-col md:flex-row md:items-center md:justify-between gap-4 shadow-sm">
+    <div>
+        <h2 class="text-2xl font-black text-gray-800 tracking-tight flex items-center gap-2">
+            <i class="fa-regular fa-file-lines text-[#B58A4A]"></i> Bill Entry
+        </h2>
+        <p class="text-xs text-gray-400 mt-1 font-medium">Planetcare Bill Entry</p>
+    </div>
+</div>
+
+<div class="p-8 space-y-8 bg-gradient-to-b from-[#F9F9F6] to-[#F4F3EF] min-h-[calc(100vh-110px)]">
+    
+    <div class="bg-white p-6 rounded-2xl border border-gray-200/70 shadow-sm max-w-4xl relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-full h-1 bg-[#B58A4A]"></div>
+        <h3 class="text-sm font-black text-gray-800 tracking-wide uppercase mb-5 flex items-center gap-2">
+            <i class="fa-solid fa-plus text-[#B58A4A]"></i> Create New Bill Entry
+        </h3>
+        
+        <form method="POST" class="space-y-6">
+            {% csrf_token %}
+            
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-5">
+                <div>
+                    <label class="text-[10px] font-extrabold text-gray-400 block mb-1.5 uppercase tracking-wider">DATE (তারিখ)</label>
+                    <input type="date" name="date" required class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-xs font-bold text-gray-700 bg-gray-50/30 focus:outline-none focus:ring-2 focus:ring-[#B58A4A]/20 focus:border-[#B58A4A] transition">
+                </div>
+                <div>
+                    <label class="text-[10px] font-extrabold text-gray-400 block mb-1.5 uppercase tracking-wider">LOT NO</label>
+                    <input type="text" name="lot_no" required class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-xs font-bold text-gray-700 bg-gray-50/30 focus:outline-none focus:ring-2 focus:ring-[#B58A4A]/20 focus:border-[#B58A4A] transition">
+                </div>
+                <div>
+                    <label class="text-[10px] font-extrabold text-gray-400 block mb-1.5 uppercase tracking-wider">ID NO</label>
+                    <input type="text" name="id_no" required class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-xs font-bold text-gray-700 bg-gray-50/30 focus:outline-none focus:ring-2 focus:ring-[#B58A4A]/20 focus:border-[#B58A4A] transition">
+                </div>
+                <div>
+                    <label class="text-[10px] font-extrabold text-gray-400 block mb-1.5 uppercase tracking-wider">AREA</label>
+                    <input type="text" name="area" required class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-xs font-bold text-gray-700 bg-gray-50/30 focus:outline-none focus:ring-2 focus:ring-[#B58A4A]/20 focus:border-[#B58A4A] transition">
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                <div>
+                    <label class="text-[10px] font-extrabold text-gray-400 block mb-1.5 uppercase tracking-wider">NAME</label>
+                    <input type="text" name="name" required class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-xs font-bold text-gray-700 bg-gray-50/30 focus:outline-none focus:ring-2 focus:ring-[#B58A4A]/20 focus:border-[#B58A4A] transition">
+                </div>
+                <div>
+                    <label class="text-[10px] font-extrabold text-gray-400 block mb-1.5 uppercase tracking-wider">JUTE (MON)</label>
+                    <input type="number" step="0.01" name="jute_mon" required class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-xs font-bold text-gray-700 bg-gray-50/30 focus:outline-none focus:ring-2 focus:ring-[#B58A4A]/20 focus:border-[#B58A4A] transition">
+                </div>
+                <div>
+                    <label class="text-[10px] font-extrabold text-gray-400 block mb-1.5 uppercase tracking-wider">RATE</label>
+                    <input type="number" step="0.01" name="rate" required class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-xs font-bold text-gray-700 bg-gray-50/30 focus:outline-none focus:ring-2 focus:ring-[#B58A4A]/20 focus:border-[#B58A4A] transition">
+                </div>
+            </div>
+
+            <div class="flex justify-end border-t border-gray-100 pt-4">
+                <button type="submit" class="bg-[#B58A4A] text-white px-6 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider hover:bg-[#9E753B] transition-all shadow-md shadow-[#B58A4A]/20 flex items-center gap-2">
+                    <i class="fa-solid fa-floppy-disk"></i> Save Bill Entry
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div class="bg-white rounded-2xl border border-gray-200/70 shadow-sm overflow-hidden max-w-4xl">
+        
+        <div class="p-5 border-b border-gray-100 bg-gray-50/50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <h3 class="font-black text-gray-800 text-sm tracking-wide uppercase flex items-center gap-2">
+                <i class="fa-solid fa-list text-gray-400"></i> All List (Bill Entries)
+            </h3>
+            
+            <div class="flex items-center gap-2 w-full sm:max-w-md justify-end">
+                <form method="GET" action="{% url 'bill_entry' %}" class="flex items-center gap-2 w-full">
+                    <div class="relative w-full">
+                        <input type="text" name="search_query" value="{{ search_query|default:'' }}" 
+                               class="w-full border border-gray-200 bg-white rounded-xl pl-4 pr-10 py-2 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-[#B58A4A]/20 focus:border-[#B58A4A] transition placeholder:text-gray-400" 
+                               placeholder="Lot, ID, Area বা Name দিয়ে খুঁজুন...">
+                        <button type="submit" class="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600">
+                            <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                        </button>
+                    </div>
+                    {% if search_query %}
+                        <a href="{% url 'bill_entry' %}" class="text-[11px] bg-gray-100 border text-gray-600 px-3 py-2 rounded-xl font-bold hover:bg-gray-200 transition whitespace-nowrap">
+                            রিসেট
+                        </a>
+                    {% endif %}
+                </form>
+
+                <a href="{% url 'export_bills_csv' %}?search_query={{ search_query|default:'' }}" class="bg-emerald-600 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-emerald-700 transition flex items-center gap-1.5 whitespace-nowrap shadow-md shadow-emerald-600/10">
+                    <i class="fa-solid fa-file-csv text-sm"></i> Export CSV
+                </a>
+            </div>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="border-b border-gray-200/80 text-[11px] font-black text-gray-400 uppercase tracking-wider bg-gray-50">
+                        <th class="py-4 px-4">Date</th>
+                        <th class="py-4 px-4">Lot No</th>
+                        <th class="py-4 px-4">ID No</th>
+                        <th class="py-4 px-4">Area</th>
+                        <th class="py-4 px-4">Name</th>
+                        <th class="py-4 px-4">Jute (Mon)</th>
+                        <th class="py-4 px-4">Rate</th>
+                        <th class="py-4 px-4 text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="text-xs text-gray-600 divide-y divide-gray-100 font-medium">
+                    {% for bill in bills %}
+                    <tr class="hover:bg-slate-50/80 transition duration-150">
+                        <td class="py-3.5 px-4 font-bold text-gray-500">{{ bill.date|date:"d-m-Y" }}</td>
+                        <td class="py-3.5 px-4 font-bold text-slate-700">{{ bill.lot_no }}</td>
+                        <td class="py-3.5 px-4 font-bold text-gray-500">{{ bill.id_no }}</td>
+                        <td class="py-3.5 px-4 font-bold text-gray-900">{{ bill.area }}</td>
+                        <td class="py-3.5 px-4 font-bold text-gray-700">{{ bill.name }}</td>
+                        <td class="py-3.5 px-4 font-bold text-slate-800">{{ bill.jute_mon }} Mds</td>
+                        <td class="py-3.5 px-4 font-black text-emerald-700">TK{{ bill.rate }}</td>
+                        <td class="py-3.5 px-4 text-center space-x-2">
+                            <a href="{% url 'edit_bill' bill.id %}" class="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-2.5 py-1.5 rounded-lg font-bold transition">
+                                <i class="fa-regular fa-pen-to-square text-[11px]"></i> Edit
+                            </a>
+                            <a href="{% url 'delete_bill' bill.id %}" onclick="return confirm('Do You Want To Delete This Bill')" class="inline-flex items-center gap-1 text-red-600 hover:text-red-800 bg-red-50 hover:bg-red-100 px-2.5 py-1.5 rounded-lg font-bold transition">
+                                <i class="fa-regular fa-trash-can text-[11px]"></i> Delete
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="py-8 text-center text-gray-400 font-bold bg-gray-50/30">
+                            <div class="flex flex-col items-center justify-center space-y-2">
+                                <i class="fa-solid fa-folder-open text-2xl text-gray-300"></i>
+                                <span class="text-xs">No Bill Here</span>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,94 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Akij Group Jute Bill Ledger</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-[#F4F3EF] font-sans antialiased">
+    <div class="flex h-screen overflow-hidden">
+        
+        <!-- Sidebar -->
+        <div class="w-64 bg-slate-900 text-gray-300 flex flex-col justify-between border-r border-slate-800 shadow-2xl z-10">
+            
+            <div>
+                <!-- Brand / Logo Section -->
+                <div class="p-6 border-b border-slate-800/60 bg-slate-950 flex items-center space-x-3">
+                    <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center overflow-hidden p-1 shadow-md border border-slate-800">
+                        <img src="{% static 'bills/images/akij_logo.png' %}" 
+                             onerror="this.onerror=null; this.src='{% static 'bills/images/akij_logo' %}';" 
+                             alt="Akij Group Logo" 
+                             class="w-full h-full object-contain">
+                    </div>
+                    <div>
+                        <h1 class="font-black text-white text-base tracking-wide uppercase leading-tight">Akij Group</h1>
+                        <span class="text-[11px] font-bold text-[#B58A4A] tracking-wider uppercase block mt-0.5">Planetcare Ltd.</span>
+                    </div>
+                </div>
+                
+                <!-- Navigation Links -->
+                <nav class="px-4 py-6">
+                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider px-3 block mb-3">Menu</span>
+                    <div class="space-y-1.5">
+                        
+                        <a href="{% url 'grade_entry' %}" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-bold transition-all duration-200 group {% if request.resolver_match.url_name == 'grade_entry' %} bg-[#B58A4A] text-white shadow-lg shadow-[#B58A4A]/20 {% else %} text-slate-400 hover:bg-slate-800 hover:text-white {% endif %}">
+                            <i class="fa-solid fa-layer-group text-base transition-transform group-hover:scale-110"></i> 
+                            <span>Grade Entry</span>
+                        </a>
+
+                        <a href="{% url 'weekly_basis' %}" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-bold transition-all duration-200 group {% if request.resolver_match.url_name == 'weekly_basis' %} bg-[#B58A4A] text-white shadow-lg shadow-[#B58A4A]/20 {% else %} text-slate-400 hover:bg-slate-800 hover:text-white {% endif %}">
+                            <i class="fa-solid fa-chart-bar text-base transition-transform group-hover:scale-110"></i> 
+                            <span>Weekly Basis</span>
+                        </a>
+
+                        <a href="{% url 'bill_entry' %}" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-bold transition-all duration-200 group {% if request.resolver_match.url_name == 'bill_entry' %} bg-[#B58A4A] text-white shadow-lg shadow-[#B58A4A]/20 {% else %} text-slate-400 hover:bg-slate-800 hover:text-white {% endif %}">
+                            <i class="fa-regular fa-file-lines text-base transition-transform group-hover:scale-110"></i> 
+                            <span>Bill Entry</span>
+                        </a>
+
+                    </div>
+                </nav>
+            </div>
+
+            <!-- 🎯 Dynamic User Info Section -->
+            <div class="p-4 border-t border-slate-800/60 bg-slate-950/40">
+                <div class="flex items-center justify-between p-2 rounded-xl bg-slate-900/50 border border-slate-800/50">
+                    <div class="flex items-center space-x-3 overflow-hidden">
+                        <div class="w-10 h-10 bg-amber-500/10 text-[#B58A4A] rounded-full flex items-center justify-center font-bold shadow-md border border-amber-500/20 shrink-0">
+                            <i class="fa-solid fa-user"></i>
+                        </div>
+                        <div class="overflow-hidden">
+                            <h4 class="text-xs font-bold text-white truncate">
+                                {{ request.user.first_name|default:request.user.username }}
+                            </h4>
+                            <span class="text-[10px] font-bold uppercase tracking-wider block mt-0.5 {% if request.user.is_superuser %}text-amber-500{% else %}text-slate-500{% endif %}">
+                                {% if request.user.is_superuser %}Admin{% else %}Center User{% endif %}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Logout Button (যদি প্রয়োজন হয়) -->
+                    {% if user.is_authenticated %}
+                    <form method="post" action="{% url 'logout' %}" class="inline">
+                        {% csrf_token %}
+                        <button type="submit" title="Logout" class="text-slate-500 hover:text-red-400 p-1.5 transition">
+                            <i class="fa-solid fa-right-from-bracket text-xs"></i>
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="flex-1 flex flex-col overflow-y-auto">
+            {% block content %}{% endblock %}
+        </div>
+
+    </div>
+</body>
+</html>

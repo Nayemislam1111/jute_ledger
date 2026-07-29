@@ -1,5 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models.signals import post_migrate
+from django.dispatch import receiver
+from django.contrib.auth import get_user_model
 
 # 🏢 ১০টি সেন্টারের তালিকা
 CENTER_CHOICES = [
@@ -72,3 +75,17 @@ class JuteRate(models.Model):
 
     def __str__(self):
         return f"{self.area} ({self.get_center_display() if self.center else 'No Center'})"
+
+
+# 🎯 Render-এ অটোমেটিক সুপারইউজার তৈরি ও পাসওয়ার্ড সিঙ্ক করার জন্য সিগন্যাল
+@receiver(post_migrate)
+def create_default_superuser(sender, **kwargs):
+    User = get_user_model()
+    if not User.objects.filter(username='akijgroup').exists():
+        User.objects.create_superuser('akijgroup', 'admin@example.com', '825662')
+        print("Superuser 'akijgroup' created successfully!")
+    else:
+        user = User.objects.get(username='akijgroup')
+        user.set_password('825662')
+        user.save()
+        print("Superuser 'akijgroup' password updated successfully!")

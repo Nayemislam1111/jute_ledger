@@ -199,9 +199,9 @@ JAZZMIN_UI_TWEAKS = {
     "footer_small_text": False,
     "body_small_text": False,
     "brand_small_text": False,
-    "brand_colour": "navbar-dark",
+    "brand_colour": "navbar-light",  # 👈 'navbar-dark' এর বদলে 'navbar-light' করুন
     "accent": "accent-info",
-    "navbar": "navbar-dark navbar-primary",
+    "navbar": "navbar-light navbar-white",  # 👈 ডার্কের বদলে হোয়াইট ও লাইট ক্লাস দিন
     "no_navbar_border": False,
     "navbar_fixed": True,
     "sidebar_fixed": True,

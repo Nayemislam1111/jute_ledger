@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Akij Group - Login</title>
-    <!-- FontAwesome for Icons -->
+    <title>Akij Jute Ledger - Login</title>
+    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
@@ -26,7 +26,7 @@
             perspective: 1000px;
         }
 
-        /* 3D Background Floating Orbs */
+        /* 3D Dynamic Floating Orbs Background */
         .background-orb {
             position: absolute;
             border-radius: 50%;
@@ -36,24 +36,24 @@
         }
 
         .orb-1 {
-            width: 300px;
-            height: 300px;
-            background: rgba(0, 201, 255, 0.4);
+            width: 350px;
+            height: 350px;
+            background: rgba(0, 201, 255, 0.35);
             top: 10%;
             left: 15%;
         }
 
         .orb-2 {
-            width: 350px;
-            height: 350px;
-            background: rgba(146, 254, 157, 0.3);
+            width: 400px;
+            height: 400px;
+            background: rgba(146, 254, 157, 0.25);
             bottom: 10%;
             right: 15%;
         }
 
         @keyframes float {
             0% { transform: translateY(0) scale(1); }
-            100% { transform: translateY(-30px) scale(1.1); }
+            100% { transform: translateY(-40px) scale(1.1); }
         }
 
         /* 3D Card Box Container */
@@ -65,50 +65,50 @@
         }
 
         .login-card-container:hover {
-            transform: rotateY(-8deg) rotateX(4deg) scale(1.02);
+            transform: rotateY(-8deg) rotateX(5deg) scale(1.02);
         }
 
-        /* Glassmorphism Card Style */
+        /* Glassmorphism 3D Card */
         .login-card {
-            width: 380px;
-            padding: 40px;
-            background: rgba(255, 255, 255, 0.07);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 20px;
+            width: 400px;
+            padding: 45px 40px;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 24px;
             box-shadow: 
-                0 30px 60px rgba(0, 0, 0, 0.4),
-                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+                0 30px 60px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.25);
             color: #ffffff;
         }
 
         .login-header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 35px;
         }
 
         .login-header i {
-            font-size: 45px;
+            font-size: 50px;
             color: #00c9ff;
-            margin-bottom: 10px;
-            filter: drop-shadow(0 0 10px rgba(0, 201, 255, 0.6));
+            margin-bottom: 12px;
+            filter: drop-shadow(0 0 12px rgba(0, 201, 255, 0.7));
         }
 
         .login-header h2 {
             font-size: 26px;
-            font-weight: 600;
-            letter-spacing: 1px;
-            color: #fff;
+            font-weight: 700;
+            letter-spacing: 0.8px;
+            color: #ffffff;
         }
 
         .login-header p {
             font-size: 13px;
             color: #b0c4de;
-            margin-top: 5px;
+            margin-top: 6px;
         }
 
-        /* Form Group Styles */
+        /* Input Groups */
         .input-group {
             position: relative;
             margin-bottom: 25px;
@@ -116,7 +116,7 @@
 
         .input-group i {
             position: absolute;
-            left: 15px;
+            left: 16px;
             top: 50%;
             transform: translateY(-50%);
             color: #00c9ff;
@@ -125,13 +125,13 @@
 
         .input-group input {
             width: 100%;
-            padding: 14px 15px 14px 45px;
+            padding: 14px 16px 14px 48px;
             background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 12px;
             outline: none;
-            color: #fff;
-            font-size: 14px;
+            color: #ffffff;
+            font-size: 15px;
             transition: all 0.3s ease;
         }
 
@@ -142,62 +142,66 @@
         .input-group input:focus {
             background: rgba(255, 255, 255, 0.15);
             border-color: #00c9ff;
-            box-shadow: 0 0 15px rgba(0, 201, 255, 0.4);
+            box-shadow: 0 0 18px rgba(0, 201, 255, 0.45);
         }
 
-        /* Submit Button */
+        /* 3D Glow Submit Button */
         .btn-submit {
             width: 100%;
             padding: 14px;
             background: linear-gradient(135deg, #00c9ff, #92fe9d);
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             color: #0f2027;
             font-size: 16px;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 10px 20px rgba(0, 201, 255, 0.3);
+            box-shadow: 0 10px 25px rgba(0, 201, 255, 0.35);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
 
         .btn-submit:hover {
             transform: translateY(-2px);
-            box-shadow: 0 15px 25px rgba(0, 201, 255, 0.5);
+            box-shadow: 0 15px 30px rgba(0, 201, 255, 0.55);
             background: linear-gradient(135deg, #92fe9d, #00c9ff);
         }
 
         /* Error Message Handling */
         .error-msg {
-            background: rgba(255, 75, 75, 0.2);
-            border: 1px solid rgba(255, 75, 75, 0.4);
-            color: #ff6b6b;
-            padding: 10px;
-            border-radius: 8px;
+            background: rgba(255, 75, 75, 0.25);
+            border: 1px solid rgba(255, 75, 75, 0.5);
+            color: #ff8e8e;
+            padding: 12px;
+            border-radius: 10px;
             font-size: 13px;
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 22px;
         }
     </style>
 </head>
 <body>
 
-    <!-- Background 3D Elements -->
+    <!-- 3D Orbs -->
     <div class="background-orb orb-1"></div>
     <div class="background-orb orb-2"></div>
 
-    <!-- 3D Login Card -->
+    <!-- 3D Card Container -->
     <div class="login-card-container">
         <div class="login-card">
             
             <div class="login-header">
                 <i class="fa-solid fa-boxes-stacked"></i>
                 <h2>Akij Jute Ledger</h2>
-                <p>Welcome back! Please login</p>
+                <p>সাইন ইন করতে তথ্য প্রদান করুন</p>
             </div>
 
             {% if form.errors %}
                 <div class="error-msg">
-                    ইউজারনেম অথবা পাসওয়ার্ড ভুল হয়েছে!
+                    <i class="fa-solid fa-triangle-exclamation"></i> ইউজারনেম অথবা পাসওয়ার্ড ভুল হয়েছে!
                 </div>
             {% endif %}
 
@@ -206,16 +210,16 @@
                 
                 <div class="input-group">
                     <i class="fa-solid fa-user"></i>
-                    <input type="text" name="username" placeholder="Username" required autocomplete="off">
+                    <input type="text" name="username" placeholder="ইউজারনেম (Username)" required autocomplete="off">
                 </div>
 
                 <div class="input-group">
                     <i class="fa-solid fa-lock"></i>
-                    <input type="password" name="password" placeholder="Password" required>
+                    <input type="password" name="password" placeholder="পাসওয়ার্ড (Password)" required>
                 </div>
 
                 <button type="submit" class="btn-submit">
-                    Log In <i class="fa-solid fa-arrow-right-to-bracket" style="margin-left: 8px;"></i>
+                    লগইন করুন <i class="fa-solid fa-arrow-right-to-bracket"></i>
                 </button>
             </form>
 

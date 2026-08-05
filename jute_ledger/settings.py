@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-import dj_database_url  # 👈 এটি যোগ করুন
+import dj_database_url
 
 # প্রজেক্টের রুট ডিরেক্টরি
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -8,9 +8,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # ⚠️ সতর্কবার্তা: প্রোডাকশনে নিরাপদ SECRET_KEY ব্যবহার করুন।
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-your-secret-key-here')
 
-DEBUG = True  # Render-এ সফলভাবে টেস্ট করার পর এটি False করতে পারেন
+DEBUG = True
 
-# Render-এর সাবডোমেইন সহ যেকোনো হোস্ট থেকে এক্সেস করার অনুমতি
 ALLOWED_HOSTS = ['*']
 
 
@@ -29,7 +28,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # 👈 WhiteNoise যুক্ত করা হয়েছে
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -60,7 +59,6 @@ WSGI_APPLICATION = 'jute_ledger.wsgi.application'
 
 
 # ডাটাবেজ কনফিগারেশন (PostgreSQL)
-# ডাটাবেজ কনফিগারেশন (PostgreSQL)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -72,7 +70,7 @@ DATABASES = {
     }
 }
 
-# Render Cloud PostgreSQL setup (Render-এ থাকলে এটি লোকাল সেটআপকে ওভাররাইড করবে)
+# Render Cloud PostgreSQL setup
 DATABASE_URL = os.environ.get("DATABASE_URL")
 if DATABASE_URL:
     DATABASES['default'] = dj_database_url.config(
@@ -82,7 +80,7 @@ if DATABASE_URL:
     )
 
 
-# পাসওয়ার্ড ভ্যালিডেশন
+# পাসওয়ার্ড ভ্যালিডেশন
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -109,7 +107,7 @@ USE_I18N = True
 USE_TZ = True
 
 
-# স্ট্যাটিক ও মিডিয়া ফাইল কনফিগারেশন
+# স্ট্যাটিক ও মিডিয়া ফাইল কনফিগারেশন
 STATIC_URL = 'static/'
 
 STATICFILES_DIRS = [
@@ -118,7 +116,7 @@ STATICFILES_DIRS = [
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-# WhiteNoise দিয়ে কম্প্রেসড ও ক্যাশড স্ট্যাটিক ফাইল হ্যান্ডলিং
+# WhiteNoise দিয়ে কম্প্রেসড ও ক্যাশড স্ট্যাটিক ফাইল হ্যান্ডলিং
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # ইউজার আপলোড করা ফাইলের জন্য
@@ -127,3 +125,8 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 # ডিফল্ট প্রাইমারি কি ফিল্ড টাইপ
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# 🎯 Redirect Settings
+LOGIN_REDIRECT_URL = 'grade_entry'
+LOGOUT_REDIRECT_URL = 'login'
+LOGIN_URL = 'login'

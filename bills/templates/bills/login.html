@@ -1,15 +1,226 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <title>Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Akij Group - Login</title>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            overflow: hidden;
+            perspective: 1000px;
+        }
+
+        /* 3D Background Floating Orbs */
+        .background-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: 1;
+            animation: float 8s ease-in-out infinite alternate;
+        }
+
+        .orb-1 {
+            width: 300px;
+            height: 300px;
+            background: rgba(0, 201, 255, 0.4);
+            top: 10%;
+            left: 15%;
+        }
+
+        .orb-2 {
+            width: 350px;
+            height: 350px;
+            background: rgba(146, 254, 157, 0.3);
+            bottom: 10%;
+            right: 15%;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) scale(1); }
+            100% { transform: translateY(-30px) scale(1.1); }
+        }
+
+        /* 3D Card Box Container */
+        .login-card-container {
+            position: relative;
+            z-index: 10;
+            transform-style: preserve-3d;
+            transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .login-card-container:hover {
+            transform: rotateY(-8deg) rotateX(4deg) scale(1.02);
+        }
+
+        /* Glassmorphism Card Style */
+        .login-card {
+            width: 380px;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.07);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            box-shadow: 
+                0 30px 60px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .login-header i {
+            font-size: 45px;
+            color: #00c9ff;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 0 10px rgba(0, 201, 255, 0.6));
+        }
+
+        .login-header h2 {
+            font-size: 26px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            color: #fff;
+        }
+
+        .login-header p {
+            font-size: 13px;
+            color: #b0c4de;
+            margin-top: 5px;
+        }
+
+        /* Form Group Styles */
+        .input-group {
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        .input-group i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #00c9ff;
+            font-size: 16px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 14px 15px 14px 45px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            outline: none;
+            color: #fff;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .input-group input:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: #00c9ff;
+            box-shadow: 0 0 15px rgba(0, 201, 255, 0.4);
+        }
+
+        /* Submit Button */
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #00c9ff, #92fe9d);
+            border: none;
+            border-radius: 10px;
+            color: #0f2027;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(0, 201, 255, 0.3);
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 25px rgba(0, 201, 255, 0.5);
+            background: linear-gradient(135deg, #92fe9d, #00c9ff);
+        }
+
+        /* Error Message Handling */
+        .error-msg {
+            background: rgba(255, 75, 75, 0.2);
+            border: 1px solid rgba(255, 75, 75, 0.4);
+            color: #ff6b6b;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 13px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
-    <h2>Login Page</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Log In</button>
-    </form>
+
+    <!-- Background 3D Elements -->
+    <div class="background-orb orb-1"></div>
+    <div class="background-orb orb-2"></div>
+
+    <!-- 3D Login Card -->
+    <div class="login-card-container">
+        <div class="login-card">
+            
+            <div class="login-header">
+                <i class="fa-solid fa-boxes-stacked"></i>
+                <h2>Akij Jute Ledger</h2>
+                <p>Welcome back! Please login</p>
+            </div>
+
+            {% if form.errors %}
+                <div class="error-msg">
+                    ইউজারনেম অথবা পাসওয়ার্ড ভুল হয়েছে!
+                </div>
+            {% endif %}
+
+            <form method="post" action="{% url 'login' %}">
+                {% csrf_token %}
+                
+                <div class="input-group">
+                    <i class="fa-solid fa-user"></i>
+                    <input type="text" name="username" placeholder="Username" required autocomplete="off">
+                </div>
+
+                <div class="input-group">
+                    <i class="fa-solid fa-lock"></i>
+                    <input type="password" name="password" placeholder="Password" required>
+                </div>
+
+                <button type="submit" class="btn-submit">
+                    Log In <i class="fa-solid fa-arrow-right-to-bracket" style="margin-left: 8px;"></i>
+                </button>
+            </form>
+
+        </div>
+    </div>
+
 </body>
 </html>

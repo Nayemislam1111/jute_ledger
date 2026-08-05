@@ -119,7 +119,7 @@ STATICFILES_DIRS = [
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-# WhiteNoise দিয়ে স্ট্যাটিক ফাইল হ্যান্ডলিং (Staticfiles storage clean implementation)
+# WhiteNoise দিয়ে স্ট্যাটিক ফাইল হ্যান্ডলিং (Staticfiles storage clean implementation)
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 # ইউজার আপলোড করা ফাইলের জন্য
@@ -147,15 +147,29 @@ JAZZMIN_SETTINGS = {
     "welcome_sign": "Welcome to Akij Group Administration",
     "copyright": "Akij Group Ltd",
     
-    # 🎯🎯 কাস্টম CSS ও JS ফাইল লিংক (এটি যুক্ত করা হলো) 🎯🎯
+    # 🎯 মেইন সাইট ইউআরএল (অ্যাডমিনের 'View Site' বাটনে কাজ করবে)
+    "site_url": "/grade-entry/",
+    
+    # 🎯 কাস্টম CSS ও JS ফাইল লিংক
     "custom_css": "admin_custom/motion.css",
     "custom_js": "admin_custom/motion.js",
     
-    # Top Menu Links
+    # Top Menu Links (উপরের নেভিগেশন বারে লিংক)
     "topmenu_links": [
         {"name": "Home", "url": "admin:index", "permissions": ["auth.view_user"]},
-        {"name": "Main Site", "url": "/grade-entry/"},
+        {"name": "Main Site", "url": "/grade-entry/", "icon": "fas fa-globe", "new_window": False},
     ],
+
+    # Side Menu Custom Links (সাইডবারে সরাসরি মেইন পেজের লিংক)
+    "custom_links": {
+        "bills": [
+            {
+                "name": "Go to Main Site",
+                "url": "/grade-entry/",
+                "icon": "fas fa-external-link-alt",
+            }
+        ]
+    },
 
     # Navigation & Sidebar
     "show_sidebar": True,

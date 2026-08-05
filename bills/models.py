@@ -19,8 +19,8 @@ CENTER_CHOICES = [
 ]
 
 class GradeEntry(models.Model):
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="অপারেটর")
-    center = models.CharField(max_length=50, choices=CENTER_CHOICES, verbose_name="সেন্টার", null=True, blank=True)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Operator")
+    center = models.CharField(max_length=50, choices=CENTER_CHOICES, verbose_name="Center", null=True, blank=True)
     lot_no = models.CharField(max_length=50)
     id_no = models.CharField(max_length=50)
     area = models.CharField(max_length=100)
@@ -39,8 +39,8 @@ class GradeEntry(models.Model):
 
 
 class BillEntry(models.Model):
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="অপারেটর")
-    center = models.CharField(max_length=50, choices=CENTER_CHOICES, verbose_name="সেন্টার", null=True, blank=True)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Operator")
+    center = models.CharField(max_length=50, choices=CENTER_CHOICES, verbose_name="Center", null=True, blank=True)
     lot_no = models.CharField(max_length=50)
     id_no = models.CharField(max_length=50)
     area = models.CharField(max_length=100)
@@ -54,10 +54,10 @@ class BillEntry(models.Model):
 
 
 class JuteRate(models.Model):
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="অপারেটর")
-    center = models.CharField(max_length=50, choices=CENTER_CHOICES, verbose_name="সেন্টার", null=True, blank=True)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Operator")
+    center = models.CharField(max_length=50, choices=CENTER_CHOICES, verbose_name="Center", null=True, blank=True)
     area = models.CharField(max_length=100)
-    effect_date = models.DateField(default="2026-01-01", verbose_name="রেট কার্যকর হওয়ার তারিখ") 
+    effect_date = models.DateField(default="2026-01-01", verbose_name="R.Eff.Date") 
     c_rate = models.FloatField(default=5800.0, verbose_name="C Rate")
     d1_rate = models.FloatField(default=5650.0, verbose_name="D(I) Rate")
     d2_rate = models.FloatField(default=5500.0, verbose_name="D(II) Rate")
@@ -67,8 +67,8 @@ class JuteRate(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     # 🎯 AI Price Forecasting
-    predicted_next_rate = models.FloatField(null=True, blank=True, verbose_name="AI আনুমানিক আগামী রেট")
-    ai_confidence_score = models.FloatField(null=True, blank=True, verbose_name="AI কনফিডেন্স স্কোর (%)")
+    predicted_next_rate = models.FloatField(null=True, blank=True, verbose_name="Prediction Rate")
+    ai_confidence_score = models.FloatField(null=True, blank=True, verbose_name="AI Score %")
 
     class Meta:
         ordering = ['-effect_date']

@@ -8,6 +8,7 @@ from django.db.models import Sum, Avg, Q
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from .models import GradeEntry, JuteRate, BillEntry
+from decimal import Decimal
 
 
 # ==========================================
@@ -133,11 +134,9 @@ def weekly_basis_view(request):
     # 👑 সুপারইউজার/অ্যাডমিন ফিল্টারিং লজিক
     if request.user.is_superuser:
         if selected_user_id:
-            # 🎯 নির্দিষ্ট যে সেন্টার সিলেক্ট করা হবে, শুধুমাত্র সেই সেন্টারের ডাটা দেখাবে
             bills = BillEntry.objects.filter(user_id=selected_user_id).select_related('user').order_by('-id')
             grades = GradeEntry.objects.filter(user_id=selected_user_id).select_related('user').order_by('-id')
         else:
-            # 🎯 ডিফল্টভাবে অ্যাডমিনের নিজস্ব ডাটা + আগের যেসব ডাটায় user=None ছিল সেগুলা একসাথে দেখাবে
             bills = BillEntry.objects.filter(
                 Q(user=request.user) | Q(user__isnull=True)
             ).select_related('user').order_by('-id')
@@ -146,16 +145,15 @@ def weekly_basis_view(request):
                 Q(user=request.user) | Q(user__isnull=True)
             ).select_related('user').order_by('-id')
     else:
-        # সাধারণ সেন্টার ইউজাররা শুধুমাত্র তাদের নিজস্ব ডাটা দেখতে পাবে
         bills = BillEntry.objects.filter(user=request.user).select_related('user').order_by('-id')
         grades = GradeEntry.objects.filter(user=request.user).select_related('user').order_by('-id')
 
-    # 📅 তারিখ অনুযায়ী ফিল্টার
+    # 📅 তারিখ অনুযায়ী ফিল্টার
     if from_date and to_date:
         bills = bills.filter(date__range=[from_date, to_date])
         grades = grades.filter(date__range=[from_date, to_date])
     
-    # 🔍 সার্চ কিউয়েরি ফিল্টার
+    # 🔍 সার্চ ফিল্টার
     if search_query:
         bills = bills.filter(
             Q(lot_no__icontains=search_query) | Q(id_no__icontains=search_query) | 
@@ -168,32 +166,39 @@ def weekly_basis_view(request):
     
     bill_averages = bills.aggregate(avg_bill_rate=Avg('rate'), avg_jute=Avg('jute_mon'))
     
-    total_amount_sum = 0.0
-    total_mds_sum = 0.0
+    # ⚡ Performance Optimization: সব JuteRate একবারেই মেমোরিতে লোড করে রাখা (N+1 Query রোধ করতে)
+    rates_by_area = defaultdict(list)
+    for rate in JuteRate.objects.all().order_by('-effect_date'):
+        rates_by_area[rate.area.strip().lower()].append(rate)
+
+    total_amount_sum = Decimal('0.0')
+    total_mds_sum = Decimal('0.0')
     
     for grade in grades:
-        rate_obj = JuteRate.objects.filter(
-            area__iexact=grade.area.strip(),
-            effect_date__lte=grade.date
-        ).order_by('-effect_date').first()
+        area_key = (grade.area or '').strip().lower()
+        matching_rates = rates_by_area.get(area_key, [])
+        
+        # grade.date-এর সাথে সামঞ্জস্যপূর্ণ সর্বশেষ রেট খোঁজা
+        rate_obj = next((r for r in matching_rates if r.effect_date and r.effect_date <= grade.date), None)
+        
+        total_mds = grade.total_mds or Decimal('0.0')
         
         if rate_obj:
-            c_pct = float(grade.c_pct or 0)
-            d1_pct = float(grade.d1_pct or 0)
-            d2_pct = float(grade.d2_pct or 0)
-            e1_pct = float(grade.e1_pct or 0)
-            e2_pct = float(grade.e2_pct or 0)
-            smr_pct = float(grade.smr_pct or 0)
-            total_mds = float(grade.total_mds or 0)
+            c_pct = grade.c_pct or Decimal('0.0')
+            d1_pct = grade.d1_pct or Decimal('0.0')
+            d2_pct = grade.d2_pct or Decimal('0.0')
+            e1_pct = grade.e1_pct or Decimal('0.0')
+            e2_pct = grade.e2_pct or Decimal('0.0')
+            smr_pct = grade.smr_pct or Decimal('0.0')
             
             effective_rate = (
-                (c_pct * float(rate_obj.c_rate or 0)) +
-                (d1_pct * float(rate_obj.d1_rate or 0)) +
-                (d2_pct * float(rate_obj.d2_rate or 0)) +
-                (e1_pct * float(rate_obj.e1_rate or 0)) +
-                (e2_pct * float(rate_obj.e2_rate or 0)) +
-                (smr_pct * float(rate_obj.smr_rate or 0))
-            ) / 100.0
+                (c_pct * (rate_obj.c_rate or Decimal('0.0'))) +
+                (d1_pct * (rate_obj.d1_rate or Decimal('0.0'))) +
+                (d2_pct * (rate_obj.d2_rate or Decimal('0.0'))) +
+                (e1_pct * (rate_obj.e1_rate or Decimal('0.0'))) +
+                (e2_pct * (rate_obj.e2_rate or Decimal('0.0'))) +
+                (smr_pct * (rate_obj.smr_rate or Decimal('0.0')))
+            ) / Decimal('100.0')
             
             grade.calculated_rate = effective_rate  
             grade.amount = effective_rate * total_mds
@@ -201,13 +206,12 @@ def weekly_basis_view(request):
             total_amount_sum += grade.amount
             total_mds_sum += total_mds
         else:
-            grade.calculated_rate = 0
-            grade.amount = 0
-            total_mds_sum += float(grade.total_mds or 0)
+            grade.calculated_rate = Decimal('0.0')
+            grade.amount = Decimal('0.0')
+            total_mds_sum += total_mds
             
-    avg_admin_grade_rate = total_amount_sum / total_mds_sum if total_mds_sum > 0 else 0
+    avg_admin_grade_rate = (total_amount_sum / total_mds_sum) if total_mds_sum > 0 else Decimal('0.0')
     
-    # 🎯 ড্রপডাউনে Admin সহ সব সেন্টার ইউজার দেখাবে
     all_users = User.objects.all().order_by('username')
     
     context = {

@@ -15,6 +15,9 @@ ALLOWED_HOSTS = ['*']
 
 # অ্যাপলিকেশন ডেফিনিশন
 INSTALLED_APPS = [
+    # 👑 Jazzmin (Admin Panel Design - admin-এর ওপরে রাখতে হবে)
+    'jazzmin',
+    
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -116,8 +119,8 @@ STATICFILES_DIRS = [
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-# WhiteNoise দিয়ে কম্প্রেসড ও ক্যাশড স্ট্যাটিক ফাইল হ্যান্ডলিং
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# WhiteNoise দিয়ে স্ট্যাটিক ফাইল হ্যান্ডলিং (Staticfiles storage clean implementation)
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 # ইউজার আপলোড করা ফাইলের জন্য
 MEDIA_URL = '/media/'
@@ -130,3 +133,68 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = 'grade_entry'
 LOGOUT_REDIRECT_URL = 'login'
 LOGIN_URL = 'login'
+
+
+# ==========================================
+# 🏢 AKIJ GROUP ADMIN PANEL CUSTOMIZATION (JAZZMIN)
+# ==========================================
+
+JAZZMIN_SETTINGS = {
+    # Title & Branding
+    "site_title": "Akij Group Admin",
+    "site_header": "Akij Group Administration",
+    "site_brand": "Akij Group Administration",
+    "welcome_sign": "Welcome to Akij Group Administration",
+    "copyright": "Akij Group Ltd",
+    
+    # 🎯🎯 কাস্টম CSS ও JS ফাইল লিংক (এটি যুক্ত করা হলো) 🎯🎯
+    "custom_css": "admin_custom/motion.css",
+    "custom_js": "admin_custom/motion.js",
+    
+    # Top Menu Links
+    "topmenu_links": [
+        {"name": "Home", "url": "admin:index", "permissions": ["auth.view_user"]},
+        {"name": "Main Site", "url": "/grade-entry/"},
+    ],
+
+    # Navigation & Sidebar
+    "show_sidebar": True,
+    "navigation_expanded": True,
+    "hide_apps": [],
+    "hide_models": [],
+    
+    # Model Icons
+    "icons": {
+        "auth": "fas fa-user-shield",
+        "auth.user": "fas fa-user-cog",
+        "auth.Group": "fas fa-users-cog",
+        "bills.BillEntry": "fas fa-file-invoice-dollar",
+        "bills.GradeEntry": "fas fa-layer-group",
+        "bills.JuteRate": "fas fa-chart-line",
+    },
+    "default_icon_parents": "fas fa-folder",
+    "default_icon_children": "fas fa-angle-right",
+    
+    # Modal Popups
+    "related_modal_active": True,
+    "use_google_fonts_booster": True,
+}
+
+JAZZMIN_UI_TWEAKS = {
+    "navbar_small_text": False,
+    "footer_small_text": False,
+    "body_small_text": False,
+    "brand_small_text": False,
+    "brand_colour": "navbar-dark",
+    "accent": "accent-info",
+    "navbar": "navbar-dark navbar-primary",
+    "no_navbar_border": False,
+    "navbar_fixed": True,
+    "sidebar_fixed": True,
+    "sidebar": "sidebar-dark-primary",
+    "theme": "pulse",
+    "dark_mode_theme": None,
+    "sidebar_nav_child_indent": True,
+    "sidebar_nav_compact_style": False,
+    "sidebar_nav_flat_style": False,
+}

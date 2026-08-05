@@ -1,0 +1,111 @@
+/* 🌌 ১. মূল ব্যাকগ্রাউন্ড (html ও body-তে থাকবে যাতে ক্যানভাস নিচে দেখা যায়) */
+html, body, body.login-page, .hold-transition {
+    background: linear-gradient(135deg, #0b132b 0%, #1c2541 40%, #111d4a 70%, #0d1b2a 100%) !important;
+    min-height: 100vh !important;
+    color: #e0e1dd !important;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* 🎯 ২. কনটেন্ট কন্টেইনারগুলোকে ১০০% স্বচ্ছ (Transparent) করা (যাতে মোশন দেখা যায়) */
+.wrapper, 
+.content-wrapper, 
+.main-footer, 
+.main-header,
+.content,
+.content-header {
+    background: transparent !important;
+    background-color: transparent !important;
+}
+
+/* 🏢 ৩. সাইডবার উইডথ বাড়িয়ে নাম না কাটার স্থায়ী ব্যবস্থা */
+.main-sidebar, .main-sidebar::before {
+    width: 280px !important;
+    background: rgba(15, 23, 42, 0.85) !important;
+    backdrop-filter: blur(12px) !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.content-wrapper, .main-footer, .main-header {
+    margin-left: 280px !important;
+}
+
+/* 🎯 ৪. ব্র‍্যান্ড হেডার নাম ঠিক করা */
+.main-sidebar .brand-link {
+    width: 280px !important;
+    height: auto !important;
+    min-height: 60px !important;
+    padding: 12px 15px !important;
+    display: flex !important;
+    align-items: center !important;
+    white-space: normal !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.main-sidebar .brand-link .brand-text {
+    white-space: normal !important;
+    word-break: break-word !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    color: #00f5d4 !important; /* নিয়ন সায়ান কালার */
+    text-shadow: 0 0 10px rgba(0, 245, 212, 0.4);
+}
+
+/* 💎 ৫. গর্জিয়াস ৩ডি গ্লাস কার্ডস (Glassmorphism 3D Look) */
+.card {
+    background: rgba(255, 255, 255, 0.08) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+    color: #ffffff !important;
+    margin-bottom: 25px !important;
+}
+
+.card-header {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 16px 16px 0 0 !important;
+    color: #ffffff !important;
+}
+
+/* ✍️ ৬. টাইটেল ও টেক্সট স্পষ্ট করা */
+.content-header h1, 
+.content-header .breadcrumb-item, 
+.content-header .breadcrumb-item a,
+.timeline-header,
+.actionlist h2,
+.actionlist h3,
+#content-main h2,
+h1, h2, h3, h4, h5 {
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7) !important;
+}
+
+.table, .table td, .table th, .timeline-body, .timeline-item {
+    color: #f1f5f9 !important;
+}
+
+.timeline-item {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 8px !important;
+}
+
+/* 🌿 ৭. ৩ডি ক্যানভাসকে সবার নিচে ভিজিবল রাখা */
+#motion-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0 !important;
+    pointer-events: none;
+}
+
+.wrapper {
+    z-index: 1 !important;
+    position: relative;
+}

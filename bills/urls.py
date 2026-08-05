@@ -1,13 +1,18 @@
 from django.urls import path
 from django.views.generic import RedirectView
 from django.contrib.auth import views as auth_views
+from django.contrib import admin  # 👈 এডমিন কাস্টমাইজেশনের জন্য ইমপোর্ট করা হলো
 from . import views
 
+# 👑 Akij Group Admin Panel Customization
+admin.site.site_header = "Akij Group Administration"   # ওপরে নীল বারে প্রদর্শিত হবে
+admin.site.site_title = "Akij Group Admin Portal"      # ব্রাউজার ট্যাবে দেখাবে
+admin.site.index_title = "Welcome to Akij Group Administration" # ড্যাশবোর্ডের শিরোনাম
+
 urlpatterns = [
-    # 🎯 মেইন লিংকে ঢুকলে সরাসরি grade-entry পেজে নিয়ে যাবে (Pattern Name ব্যবহার উত্তম)
+    # 🎯 মেইন লিংকে ঢুকলে সরাসরি grade-entry পেজে নিয়ে যাবে
     path('', RedirectView.as_view(pattern_name='grade_entry', permanent=False)), 
     
-    # 🔑 Login Route
     # 🔑 Login Route
     path('accounts/login/', auth_views.LoginView.as_view(template_name='bills/login.html'), name='login'),
 

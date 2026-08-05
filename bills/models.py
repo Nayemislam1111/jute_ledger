@@ -32,7 +32,7 @@ class GradeEntry(models.Model):
     e2_pct = models.DecimalField(max_digits=5, decimal_places=2, default=0.0)
     smr_pct = models.DecimalField(max_digits=5, decimal_places=2, default=0.0)
     date = models.DateField() 
-    total_mds = models.DecimalField(max_digits=12, decimal_places=2, default=0.0)
+    total_mds = models.DecimalField(max_digits=12, decimal_places=3, default=0.0)
 
     def __str__(self):
         return f"Lot: {self.lot_no} - Area: {self.area} ({self.get_center_display() if self.center else 'No Center'})"

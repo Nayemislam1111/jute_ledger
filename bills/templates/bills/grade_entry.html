@@ -39,7 +39,7 @@
                 </div>
                 <div>
                     <label class="text-[10px] font-extrabold text-gray-400 block mb-1.5 uppercase tracking-wider">TOTAL MDS (মোট মণ)</label>
-                    <input type="number" step="0.01" name="total_mds" required class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-xs font-bold text-gray-700 bg-gray-50/30 focus:outline-none focus:ring-2 focus:ring-[#B58A4A]/20 focus:border-[#B58A4A] transition" value="0">
+                    <input type="number" step="0.001" name="total_mds" required class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-xs font-bold text-gray-700 bg-gray-50/30 focus:outline-none focus:ring-2 focus:ring-[#B58A4A]/20 focus:border-[#B58A4A] transition" value="0">
                 </div>
                 <div>
                     <label class="text-[10px] font-extrabold text-gray-400 block mb-1.5 uppercase tracking-wider">DATE</label>
@@ -144,7 +144,7 @@
                         <td class="py-3.5 px-4 font-bold text-gray-500">{{ grade.id_no }}</td>
                         <td class="py-3.5 px-4 font-semibold text-gray-800">{{ grade.area }}</td>
                         <td class="py-3.5 px-4 font-bold text-gray-600">{{ grade.under_project }}</td>
-                        <td class="py-3.5 px-4 text-center font-black text-slate-800">{{ grade.total_mds }}</td>
+                        <td class="py-3.5 px-4 text-center font-black text-slate-800">{{ grade.total_mds|floatformat:3 }}</td>
                         <td class="py-3.5 px-4 text-center space-x-2">
                             <a href="{% url 'edit_grade' grade.id %}" class="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-2.5 py-1.5 rounded-lg font-bold transition">
                                 <i class="fa-regular fa-pen-to-square text-[11px]"></i> Edit

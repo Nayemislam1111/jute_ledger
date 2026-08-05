@@ -1,6 +1,7 @@
 import csv
 import json
 from collections import defaultdict
+from decimal import Decimal
 from django.utils import timezone
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
@@ -8,7 +9,6 @@ from django.db.models import Sum, Avg, Q
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from .models import GradeEntry, JuteRate, BillEntry
-from decimal import Decimal
 
 
 # ==========================================
@@ -119,10 +119,7 @@ def bill_entry_view(request):
 
 
 # ==========================================
-# 3. Weekly Basis View (আপডেট করা হয়েছে)
-# ==========================================
-# ==========================================
-# 3. Weekly Basis View (ডিফল্ট অ্যাডমিন ও আগের ডাটা সাপোর্টসহ)
+# 3. Weekly Basis View
 # ==========================================
 @login_required
 def weekly_basis_view(request):
@@ -166,7 +163,7 @@ def weekly_basis_view(request):
     
     bill_averages = bills.aggregate(avg_bill_rate=Avg('rate'), avg_jute=Avg('jute_mon'))
     
-    # ⚡ Performance Optimization: সব JuteRate একবারেই মেমোরিতে লোড করে রাখা (N+1 Query রোধ করতে)
+    # ⚡ Performance Optimization: সব JuteRate লোড করা
     rates_by_area = defaultdict(list)
     for rate in JuteRate.objects.all().order_by('-effect_date'):
         rates_by_area[rate.area.strip().lower()].append(rate)
@@ -181,23 +178,23 @@ def weekly_basis_view(request):
         # grade.date-এর সাথে সামঞ্জস্যপূর্ণ সর্বশেষ রেট খোঁজা
         rate_obj = next((r for r in matching_rates if r.effect_date and r.effect_date <= grade.date), None)
         
-        total_mds = grade.total_mds or Decimal('0.0')
+        total_mds = Decimal(str(grade.total_mds or 0))
         
         if rate_obj:
-            c_pct = grade.c_pct or Decimal('0.0')
-            d1_pct = grade.d1_pct or Decimal('0.0')
-            d2_pct = grade.d2_pct or Decimal('0.0')
-            e1_pct = grade.e1_pct or Decimal('0.0')
-            e2_pct = grade.e2_pct or Decimal('0.0')
-            smr_pct = grade.smr_pct or Decimal('0.0')
+            c_pct = Decimal(str(grade.c_pct or 0))
+            d1_pct = Decimal(str(grade.d1_pct or 0))
+            d2_pct = Decimal(str(grade.d2_pct or 0))
+            e1_pct = Decimal(str(grade.e1_pct or 0))
+            e2_pct = Decimal(str(grade.e2_pct or 0))
+            smr_pct = Decimal(str(grade.smr_pct or 0))
             
             effective_rate = (
-                (c_pct * (rate_obj.c_rate or Decimal('0.0'))) +
-                (d1_pct * (rate_obj.d1_rate or Decimal('0.0'))) +
-                (d2_pct * (rate_obj.d2_rate or Decimal('0.0'))) +
-                (e1_pct * (rate_obj.e1_rate or Decimal('0.0'))) +
-                (e2_pct * (rate_obj.e2_rate or Decimal('0.0'))) +
-                (smr_pct * (rate_obj.smr_rate or Decimal('0.0')))
+                (c_pct * Decimal(str(rate_obj.c_rate or 0))) +
+                (d1_pct * Decimal(str(rate_obj.d1_rate or 0))) +
+                (d2_pct * Decimal(str(rate_obj.d2_rate or 0))) +
+                (e1_pct * Decimal(str(rate_obj.e1_rate or 0))) +
+                (e2_pct * Decimal(str(rate_obj.e2_rate or 0))) +
+                (smr_pct * Decimal(str(rate_obj.smr_rate or 0)))
             ) / Decimal('100.0')
             
             grade.calculated_rate = effective_rate  
@@ -320,15 +317,15 @@ def export_weekly_csv(request):
         
     area_summary = defaultdict(lambda: {
         'lot_count': 0,
-        'c_sum': 0.0,
-        'd1_sum': 0.0,
-        'd2_sum': 0.0,
-        'e1_sum': 0.0,
-        'e2_sum': 0.0,
-        'smr_sum': 0.0,
-        'rate_sum': 0.0,
-        'total_mds': 0.0,
-        'total_amount': 0.0
+        'c_sum': Decimal('0.0'),
+        'd1_sum': Decimal('0.0'),
+        'd2_sum': Decimal('0.0'),
+        'e1_sum': Decimal('0.0'),
+        'e2_sum': Decimal('0.0'),
+        'smr_sum': Decimal('0.0'),
+        'rate_sum': Decimal('0.0'),
+        'total_mds': Decimal('0.0'),
+        'total_amount': Decimal('0.0')
     })
         
     for grade in grades:
@@ -338,42 +335,44 @@ def export_weekly_csv(request):
         ).order_by('-effect_date').first()
         
         if rate_obj:
-            effective_rate = ((float(grade.c_pct or 0) * float(rate_obj.c_rate or 0)) +
-                              (float(grade.d1_pct or 0) * float(rate_obj.d1_rate or 0)) +
-                              (float(grade.d2_pct or 0) * float(rate_obj.d2_rate or 0)) +
-                              (float(grade.e1_pct or 0) * float(rate_obj.e1_rate or 0)) +
-                              (float(grade.e2_pct or 0) * float(rate_obj.e2_rate or 0)) +
-                              (float(grade.smr_pct or 0) * float(rate_obj.smr_rate or 0))) / 100.0
-            amount = effective_rate * float(grade.total_mds or 0)
+            effective_rate = (
+                (Decimal(str(grade.c_pct or 0)) * Decimal(str(rate_obj.c_rate or 0))) +
+                (Decimal(str(grade.d1_pct or 0)) * Decimal(str(rate_obj.d1_rate or 0))) +
+                (Decimal(str(grade.d2_pct or 0)) * Decimal(str(rate_obj.d2_rate or 0))) +
+                (Decimal(str(grade.e1_pct or 0)) * Decimal(str(rate_obj.e1_rate or 0))) +
+                (Decimal(str(grade.e2_pct or 0)) * Decimal(str(rate_obj.e2_rate or 0))) +
+                (Decimal(str(grade.smr_pct or 0)) * Decimal(str(rate_obj.smr_rate or 0)))
+            ) / Decimal('100.0')
+            amount = effective_rate * Decimal(str(grade.total_mds or 0))
         else:
-            effective_rate, amount = 0, 0
+            effective_rate, amount = Decimal('0.0'), Decimal('0.0')
             
         area_name = grade.area.strip()
         area_summary[area_name]['lot_count'] += 1
-        area_summary[area_name]['c_sum'] += float(grade.c_pct or 0)
-        area_summary[area_name]['d1_sum'] += float(grade.d1_pct or 0)
-        area_summary[area_name]['d2_sum'] += float(grade.d2_pct or 0)
-        area_summary[area_name]['e1_sum'] += float(grade.e1_pct or 0)
-        area_summary[area_name]['e2_sum'] += float(grade.e2_pct or 0)
-        area_summary[area_name]['smr_sum'] += float(grade.smr_pct or 0)
+        area_summary[area_name]['c_sum'] += Decimal(str(grade.c_pct or 0))
+        area_summary[area_name]['d1_sum'] += Decimal(str(grade.d1_pct or 0))
+        area_summary[area_name]['d2_sum'] += Decimal(str(grade.d2_pct or 0))
+        area_summary[area_name]['e1_sum'] += Decimal(str(grade.e1_pct or 0))
+        area_summary[area_name]['e2_sum'] += Decimal(str(grade.e2_pct or 0))
+        area_summary[area_name]['smr_sum'] += Decimal(str(grade.smr_pct or 0))
         area_summary[area_name]['rate_sum'] += effective_rate
-        area_summary[area_name]['total_mds'] += float(grade.total_mds or 0)
+        area_summary[area_name]['total_mds'] += Decimal(str(grade.total_mds or 0))
         area_summary[area_name]['total_amount'] += amount
         
     grand_lots = 0
-    grand_mds = 0.0
-    grand_amount = 0.0
+    grand_mds = Decimal('0.0')
+    grand_amount = Decimal('0.0')
 
     for area, data in area_summary.items():
         count = data['lot_count']
         
-        avg_c = data['c_sum'] / count if count > 0 else 0
-        avg_d1 = data['d1_sum'] / count if count > 0 else 0
-        avg_d2 = data['d2_sum'] / count if count > 0 else 0
-        avg_e1 = data['e1_sum'] / count if count > 0 else 0
-        avg_e2 = data['e2_sum'] / count if count > 0 else 0
-        avg_smr = data['smr_sum'] / count if count > 0 else 0
-        avg_rate = data['rate_sum'] / count if count > 0 else 0
+        avg_c = data['c_sum'] / count if count > 0 else Decimal('0.0')
+        avg_d1 = data['d1_sum'] / count if count > 0 else Decimal('0.0')
+        avg_d2 = data['d2_sum'] / count if count > 0 else Decimal('0.0')
+        avg_e1 = data['e1_sum'] / count if count > 0 else Decimal('0.0')
+        avg_e2 = data['e2_sum'] / count if count > 0 else Decimal('0.0')
+        avg_smr = data['smr_sum'] / count if count > 0 else Decimal('0.0')
+        avg_rate = data['rate_sum'] / count if count > 0 else Decimal('0.0')
         
         writer.writerow([
             area, 

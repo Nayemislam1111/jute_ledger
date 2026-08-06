@@ -229,3 +229,193 @@ form label, .form-group label {
     border: 1px solid #cbd5e1 !important;
     border-radius: 6px !important;
 }
+
+/* ==========================================================================
+   11. ডান পাশের সাবমিট ও অ্যাকশন বাটন (কম্প্যাক্ট, রো-ওয়াইজ, ৩ডি পুশ বাটন)
+   NOTE: Jazzmin থিম (pulse) বাটনে নিজে থেকে .btn/.btn-success/.btn-info
+   ক্লাস বসিয়ে দেয় এবং সেগুলোর CSS specificity আমাদের আগের রুলের চেয়ে বেশি
+   ছিল। তাই এখানে ক্লাস রিপিট করে (.submit-row.submit-row) specificity
+   ইচ্ছাকৃতভাবে বাড়ানো হয়েছে যাতে থিমের বাটন স্টাইল ওভাররাইড হয়।
+   ========================================================================== */
+div.submit-row.submit-row,
+div.submit-row.submit-row.d-flex,
+.card-footer.submit-row.submit-row {
+    background: rgba(255, 255, 255, 0.05) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    border-radius: 12px !important;
+    padding: 12px !important;
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* বাটনগুলোকে ছোট, ইনলাইন ও পাশাপাশি রাখার জন্য ফিক্স (Bootstrap .btn/.btn-block সহ) */
+.submit-row.submit-row input,
+.submit-row.submit-row a,
+.submit-row.submit-row button,
+.submit-row.submit-row input.btn,
+.submit-row.submit-row a.btn,
+.submit-row.submit-row button.btn,
+.submit-row.submit-row .btn-block,
+.submit-row.submit-row input.btn-block,
+.submit-row.submit-row a.btn-block,
+.submit-row.submit-row button.btn-block {
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: max-content !important;
+    height: auto !important;
+    flex: 0 0 auto !important;
+    flex-grow: 0 !important;
+    flex-basis: auto !important;
+    margin: 0 !important;
+    padding: 6px 14px !important;
+    font-size: 11px !important;
+    line-height: normal !important;
+    font-weight: 700 !important;
+    border-radius: 6px !important;
+    text-align: center !important;
+    display: inline-block !important;
+    cursor: pointer !important;
+    border: none !important;
+    text-decoration: none !important;
+    letter-spacing: 0.3px !important;
+    position: relative !important;
+    white-space: nowrap !important;
+    transition: all 0.12s ease-in-out !important;
+}
+
+/* ১. Save বাটন (গ্রিন ৩ডি ডেপথ) */
+.submit-row.submit-row input[name="_save"] {
+    background-color: #10b981 !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 0 #047857, 0 6px 12px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* ২. Save and add another / continue (ব্লু ৩ডি ডেপথ) */
+.submit-row.submit-row input[name="_addanother"],
+.submit-row.submit-row input[name="_continue"] {
+    background-color: #3b82f6 !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 0 #1d4ed8, 0 6px 12px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* ৩. Delete বাটন (রেড ৩ডি ডেপথ) */
+.submit-row.submit-row a.deletelink {
+    background-color: #ef4444 !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 0 #b91c1c, 0 6px 12px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* ৪. History বা অন্যান্য বাটন */
+.submit-row.submit-row a.historylink {
+    background-color: #475569 !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 0 #334155, 0 6px 12px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* হোভার ইফেক্ট (বাটন হালকা উপরে উঠবে) */
+.submit-row.submit-row input:hover,
+.submit-row.submit-row a:hover,
+.submit-row.submit-row button:hover {
+    transform: translateY(-2px) !important;
+}
+
+/* ক্লিক বা অ্যাক্টিভ ইফেক্ট (বাটন চাপ দিলে নিচে বসবে) */
+.submit-row.submit-row input:active,
+.submit-row.submit-row a:active {
+    transform: translateY(3px) !important;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* ==========================================================================
+   12. পুরো অ্যাডমিন প্যানেলের সব বাটন - ৩ডি (Add, Filter, Action, Toolbar ইত্যাদি)
+   Jazzmin-এর Bootstrap .btn* ক্লাসগুলোও এখানে সরাসরি টার্গেট করা হয়েছে,
+   এবং specificity বাড়াতে ক্লাস রিপিট করা হয়েছে।
+   ========================================================================== */
+
+.object-tools a.object-tools,
+.object-tools .btn.btn,
+a.button.button,
+input[type="submit"][type="submit"],
+input[type="button"][type="button"],
+.actions button.btn,
+.paginator a.paginator,
+.paginator .this-page.this-page {
+    display: inline-block !important;
+    padding: 7px 16px !important;
+    font-size: 12px !important;
+    line-height: normal !important;
+    font-weight: 700 !important;
+    color: #ffffff !important;
+    background-color: #3b82f6 !important;
+    background-image: none !important;
+    border: none !important;
+    border-radius: 8px !important;
+    text-align: center !important;
+    text-decoration: none !important;
+    cursor: pointer !important;
+    letter-spacing: 0.3px !important;
+    box-shadow: 0 4px 0 #1d4ed8, 0 6px 12px rgba(0, 0, 0, 0.3) !important;
+    transition: all 0.12s ease-in-out !important;
+}
+
+/* "Add" বাটন (উপরে ডান পাশে, সবুজ) */
+.object-tools a.addlink.addlink {
+    background-color: #10b981 !important;
+    box-shadow: 0 4px 0 #047857, 0 6px 12px rgba(0, 0, 0, 0.3) !important;
+    padding-left: 34px !important;
+}
+
+/* Filter সাইডবারের ভেতরের অ্যাক্টিভ/লিংক বাটন */
+#changelist-filter li.selected a,
+#changelist-filter a:hover {
+    background-color: #475569 !important;
+    box-shadow: 0 3px 0 #334155, 0 4px 8px rgba(0, 0, 0, 0.25) !important;
+    border-radius: 6px !important;
+    padding: 4px 10px !important;
+}
+
+/* Action ড্রপডাউনের পাশের "Go" বাটন */
+.actions button.btn {
+    background-color: #475569 !important;
+    box-shadow: 0 4px 0 #334155, 0 6px 12px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Pagination বাটন */
+.paginator a.paginator,
+.paginator .this-page.this-page {
+    background-color: #1c2541 !important;
+    box-shadow: 0 3px 0 #0d1b2a, 0 4px 8px rgba(0, 0, 0, 0.25) !important;
+    padding: 5px 12px !important;
+    border-radius: 6px !important;
+}
+
+/* হোভার - সব বাটন সামান্য উপরে উঠবে */
+.object-tools a.object-tools:hover,
+.object-tools .btn.btn:hover,
+a.button.button:hover,
+input[type="submit"][type="submit"]:hover,
+input[type="button"][type="button"]:hover,
+.actions button.btn:hover,
+.paginator a.paginator:hover {
+    transform: translateY(-2px) !important;
+    filter: brightness(1.08) !important;
+}
+
+/* অ্যাক্টিভ/ক্লিক - সব বাটন চেপে বসবে */
+.object-tools a.object-tools:active,
+.object-tools .btn.btn:active,
+a.button.button:active,
+input[type="submit"][type="submit"]:active,
+input[type="button"][type="button"]:active,
+.actions button.btn:active,
+.paginator a.paginator:active {
+    transform: translateY(3px) !important;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.2) !important;
+}

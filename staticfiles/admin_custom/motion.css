@@ -229,3 +229,90 @@ form label, .form-group label {
     border: 1px solid #cbd5e1 !important;
     border-radius: 6px !important;
 }
+
+/* ==========================================================================
+   11. ডান পাশের সাবমিট ও অ্যাকশন বাটন (কম্প্যাক্ট, রো-ওয়াইজ, ৩ডি পুশ বাটন)
+   ========================================================================== */
+.submit-row {
+    background: rgba(255, 255, 255, 0.05) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    border-radius: 12px !important;
+    padding: 14px !important;
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 10px !important;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* বাটনগুলোকে ছোট, ইনলাইন ও কম্প্যাক্ট রাখার জন্য ফিক্স */
+.submit-row input,
+.submit-row a,
+.submit-row button {
+    width: auto !important;
+    min-width: 120px !important;
+    max-width: none !important;
+    flex: unset !important;
+    margin: 0 !important;
+    padding: 8px 18px !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    border-radius: 8px !important;
+    text-align: center !important;
+    display: inline-block !important;
+    cursor: pointer !important;
+    border: none !important;
+    text-decoration: none !important;
+    letter-spacing: 0.3px !important;
+    position: relative !important;
+    transition: all 0.12s ease-in-out !important;
+}
+
+/* ১. Save বাটন (গ্রিন ৩ডি ডেপথ) */
+.submit-row input[name="_save"] {
+    background-color: #10b981 !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 0 #047857, 0 6px 12px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* ২. Save and add another / continue (ব্লু ৩ডি ডেপথ) */
+.submit-row input[name="_addanother"],
+.submit-row input[name="_continue"] {
+    background-color: #3b82f6 !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 0 #1d4ed8, 0 6px 12px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* ৩. Delete বাটন (রেড ৩ডি ডেপথ) */
+.submit-row a.deletelink {
+    background-color: #ef4444 !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 0 #b91c1c, 0 6px 12px rgba(0, 0, 0, 0.3) !important;
+    line-height: normal !important;
+}
+
+/* ৪. History বা অন্যান্য বাটন */
+.submit-row a.historylink {
+    background-color: #475569 !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 0 #334155, 0 6px 12px rgba(0, 0, 0, 0.3) !important;
+    line-height: normal !important;
+}
+
+/* হোভার ইফেক্ট (বাটন হালকা উপরে উঠবে) */
+.submit-row input:hover,
+.submit-row a:hover,
+.submit-row button:hover {
+    transform: translateY(-2px) !important;
+}
+
+/* ক্লিক বা অ্যাক্টিভ ইফেক্ট (বাটন চাপ দিলে নিচে বসবে) */
+.submit-row input:active,
+.submit-row a:active {
+    transform: translateY(3px) !important;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.2) !important;
+}

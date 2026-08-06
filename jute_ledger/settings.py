@@ -160,16 +160,6 @@ JAZZMIN_SETTINGS = {
         {"name": "Main Site", "url": "/grade-entry/", "icon": "fas fa-globe", "new_window": False},
     ],
 
-    # Side Menu Custom Links (সাইডবারে সরাসরি মেইন পেজের লিংক)
-    "custom_links": {
-        "bills": [
-            {
-                "name": "Go to Main Site",
-                "url": "/grade-entry/",
-                "icon": "fas fa-external-link-alt",
-            }
-        ]
-    },
 
     # Navigation & Sidebar
     "show_sidebar": True,

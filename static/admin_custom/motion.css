@@ -85,7 +85,7 @@ nav.main-header {
 }
 
 /* ==========================================================================
-   6. কন্টেন্ট হেডার (Dashboard / Jute rates বার)
+   6. কন্টেন্ট হেডার ও ব্রেডক্রাম্ব ফিক্স (উজ্জ্বল ও দৃশ্যমান)
    ========================================================================== */
 .content-header {
     position: relative !important;
@@ -104,12 +104,21 @@ nav.main-header {
     margin: 0 !important;
 }
 
+.content-header .breadcrumb,
+.content-header .breadcrumb a,
 .content-header .breadcrumb-item,
 .content-header .breadcrumb-item a,
-.content-header .breadcrumb-item.active {
-    color: #ffffff !important;
-    font-weight: 600 !important;
+.content-header .breadcrumb-item.active,
+.content-wrapper .content-header h1 + ol.breadcrumb li,
+.content-wrapper .content-header h1 + ol.breadcrumb li a {
+    color: #00f5d4 !important;
+    font-weight: 700 !important;
+    text-shadow: 0 0 8px rgba(0, 245, 212, 0.6) !important;
     opacity: 1 !important;
+}
+
+.content-header .breadcrumb-item + .breadcrumb-item::before {
+    color: #ffffff !important;
 }
 
 /* ==========================================================================

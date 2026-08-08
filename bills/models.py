@@ -77,6 +77,18 @@ class JuteRate(models.Model):
         return f"{self.area} ({self.get_center_display() if self.center else 'No Center'})"
 
 
+# 🌐 ভিজিটর আইপি এবং লোকেশন ট্র্যাক করার মডেল
+class VisitorLog(models.Model):
+    ip_address = models.GenericIPAddressField()
+    country = models.CharField(max_length=100, null=True, blank=True)
+    region = models.CharField(max_length=100, null=True, blank=True) # বিভাগ বা স্টেট
+    city = models.CharField(max_length=100, null=True, blank=True)    # জেলা বা শহর
+    visited_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.ip_address} - {self.city}, {self.country}"
+
+
 # 🎯 Render-এ অটোমেটিক সুপারইউজার তৈরি ও পাসওয়ার্ড সিঙ্ক করার জন্য সিগন্যাল
 @receiver(post_migrate)
 def create_default_superuser(sender, **kwargs):

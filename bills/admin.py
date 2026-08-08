@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.html import format_html
 from django.urls import reverse
-from .models import GradeEntry, BillEntry, JuteRate
+from .models import GradeEntry, BillEntry, JuteRate, VisitorLog  # 🌐 VisitorLog এখানে ইম্পোর্ট করা হলো
 from .ai_helpers import update_area_forecasting  # 🤖 এআই হেল্পার ফাংশনটি ইম্পোর্ট করা হলো
 
 
@@ -18,7 +18,7 @@ class GradeEntryAdmin(admin.ModelAdmin):
             return qs  # সেন্ট্রাল ইউজার ১০টি সেন্টারের সব ডেটা দেখতে পাবে
         return qs.filter(user=request.user)  # সাধারণ ইউজার শুধু নিজের সেন্টারের ডেটা দেখতে পাবে
 
-    # ✍️ সেভ করার সময় ইউজার অটো-অ্যাসাইন লজিক
+    # ✍️ সেভ করার সময় ইউজার অটো-অ্যাসাইন লজিক
     def save_model(self, request, obj, form, change):
         if not obj.user:
             obj.user = request.user
@@ -38,7 +38,7 @@ class BillEntryAdmin(admin.ModelAdmin):
             return qs
         return qs.filter(user=request.user)
 
-    # ✍️ সেভ করার সময় ইউজার অটো-অ্যাসাইন লজিক
+    # ✍️ সেভ করার সময় ইউজার অটো-অ্যাসাইন লজিক
     def save_model(self, request, obj, form, change):
         if not obj.user:
             obj.user = request.user
@@ -65,13 +65,13 @@ class JuteRateAdmin(admin.ModelAdmin):
             return qs  # সেন্ট্রাল ইউজার ১০টি সেন্টারের সব ডেটা দেখতে পাবে
         return qs.filter(user=request.user)  # সেন্টার ইউজার শুধু নিজের ডেটা দেখতে পাবে
 
-    # 🤖 জ্যাঙ্গো অ্যাডমিনে রেট সেভ হওয়ার পর অটো-ইউজার ও AI ফোরকাস্ট রান করার লজিক
+    # 🤖 জ্যাঙ্গো অ্যাডমিনে রেট সেভ হওয়ার পর অটো-ইউজার ও AI ফোরকাস্ট রান করার লজিক
     def save_model(self, request, obj, form, change):
         if not obj.user:
             obj.user = request.user
         # প্রথমে নরমাল ডেটাবেস সেভ সম্পন্ন হবে
         super().save_model(request, obj, form, change)
-        # সেভ হওয়ার পর ওই নির্দিষ্ট এরিয়ার জন্য এআই প্রেডিকশন রান হবে
+        # সেভ হওয়ার পর ওই নির্দিষ্ট এরিয়ার জন্য এআই প্রেডিকশন রান হবে
         update_area_forecasting(obj.area)
 
     # ✏️ কাস্টম ইডিট বাটন লিংক
@@ -91,3 +91,11 @@ class JuteRateAdmin(admin.ModelAdmin):
             url
         )
     delete_link.short_description = 'Delete'
+
+
+# 🌐 ভিজিটর লগ অ্যাডমিন প্যানেলে দেখানোর জন্য কনফিগারেশন
+@admin.register(VisitorLog)
+class VisitorLogAdmin(admin.ModelAdmin):
+    list_display = ('ip_address', 'country', 'region', 'city', 'visited_at')
+    list_filter = ('country', 'city', 'visited_at')
+    search_fields = ('ip_address', 'city')

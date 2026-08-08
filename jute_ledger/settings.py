@@ -38,6 +38,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    
+    # 🌐 ভিজিটর আইপি এবং লোকেশন ট্র্যাক করার কাস্টম মিডলওয়্যার
+    'jute_ledger.middleware.VisitorTrackingMiddleware',
 ]
 
 ROOT_URLCONF = 'jute_ledger.urls'
@@ -126,6 +129,9 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
+# GeoIP পাথ কনফিগারেশন
+GEOIP_PATH = os.path.join(BASE_DIR, 'geoip')
+
 # ডিফল্ট প্রাইমারি কি ফিল্ড টাইপ
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -175,6 +181,7 @@ JAZZMIN_SETTINGS = {
         "bills.BillEntry": "fas fa-file-invoice-dollar",
         "bills.GradeEntry": "fas fa-layer-group",
         "bills.JuteRate": "fas fa-chart-line",
+        "bills.VisitorLog": "fas fa-map-marker-alt",
     },
     "default_icon_parents": "fas fa-folder",
     "default_icon_children": "fas fa-angle-right",
@@ -191,7 +198,7 @@ JAZZMIN_UI_TWEAKS = {
     "brand_small_text": False,
     "brand_colour": "navbar-light",  # 👈 'navbar-dark' এর বদলে 'navbar-light' করুন
     "accent": "accent-info",
-    "navbar": "navbar-light navbar-white",  # 👈 ডার্কের বদলে হোয়াইট ও লাইট ক্লাস দিন
+    "navbar": "navbar-light navbar-white",  # 👈 ডার্কের বদলে হোয়াইট ও লাইট ক্লাস দিন
     "no_navbar_border": False,
     "navbar_fixed": True,
     "sidebar_fixed": True,

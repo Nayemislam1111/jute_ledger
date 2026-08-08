@@ -20,6 +20,9 @@ urlpatterns = [
     path('grade-entry/', views.grade_entry_view, name='grade_entry'),
     path('bill-entry/', views.bill_entry_view, name='bill_entry'),
     path('weekly-basis/', views.weekly_basis_view, name='weekly_basis'),
+    
+    # 📊 Dashboard Route
+    path('dashboard/', views.dashboard_view, name='dashboard'),
 
     # 🔑 Logout Route
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),

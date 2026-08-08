@@ -7,6 +7,8 @@
     <title>Akij Group Jute Bill Ledger</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Chart.js for Dashboard Analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="bg-[#F4F3EF] font-sans antialiased">
     <div class="flex h-screen overflow-hidden">
@@ -34,6 +36,12 @@
                     <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider px-3 block mb-3">Menu</span>
                     <div class="space-y-1.5">
                         
+                        <!-- Dashboard Menu Item -->
+                        <a href="{% url 'dashboard' %}" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-bold transition-all duration-200 group {% if request.resolver_match.url_name == 'dashboard' %} bg-[#B58A4A] text-white shadow-lg shadow-[#B58A4A]/20 {% else %} text-slate-400 hover:bg-slate-800 hover:text-white {% endif %}">
+                            <i class="fa-solid fa-chart-pie text-base transition-transform group-hover:scale-110"></i> 
+                            <span>Dashboard</span>
+                        </a>
+
                         <a href="{% url 'grade_entry' %}" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-bold transition-all duration-200 group {% if request.resolver_match.url_name == 'grade_entry' %} bg-[#B58A4A] text-white shadow-lg shadow-[#B58A4A]/20 {% else %} text-slate-400 hover:bg-slate-800 hover:text-white {% endif %}">
                             <i class="fa-solid fa-layer-group text-base transition-transform group-hover:scale-110"></i> 
                             <span>Grade Entry</span>
@@ -70,7 +78,7 @@
                         </div>
                     </div>
 
-                    <!-- Logout Button (যদি প্রয়োজন হয়) -->
+                    <!-- Logout Button -->
                     {% if user.is_authenticated %}
                     <form method="post" action="{% url 'logout' %}" class="inline">
                         {% csrf_token %}

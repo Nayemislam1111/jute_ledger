@@ -1,0 +1,77 @@
+{% extends 'bills/base.html' %} 
+
+{% block content %}
+<div class="p-8">
+    <div class="flex justify-between items-center mb-8">
+        <h2 class="text-2xl font-black text-slate-800">এরিয়াভিত্তিক গড় গ্রেড ড্যাশবোর্ড</h2>
+        <a href="{% url 'grade_entry' %}" class="bg-slate-900 text-white px-5 py-2 rounded-lg font-bold hover:bg-[#B58A4A] transition">
+            <i class="fa-solid fa-house mr-2"></i> হোম (Grade Entry)
+        </a>
+    </div>
+
+    <!-- সামারি কার্ড -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        <div class="bg-blue-600 rounded-2xl p-6 text-white shadow-lg">
+            <h5 class="text-sm opacity-80 font-bold mb-1">মোট পাট (গ্রেড মোট মণ)</h5>
+            <h3 class="text-2xl font-black">{{ total_grade_mds }} মণ</h3>
+        </div>
+        <div class="bg-green-600 rounded-2xl p-6 text-white shadow-lg">
+            <h5 class="text-sm opacity-80 font-bold mb-1">মোট বিলের পরিমাণ</h5>
+            <h3 class="text-2xl font-black">৳ {{ total_bill_amount }}</h3>
+        </div>
+        <div class="bg-amber-500 rounded-2xl p-6 text-white shadow-lg">
+            <h5 class="text-sm opacity-80 font-bold mb-1">গড় বিল রেট</h5>
+            <h3 class="text-2xl font-black">৳ {{ avg_bill_rate }}</h3>
+        </div>
+    </div>
+
+    <!-- মেইন লাইন চার্ট (এলাকাভিত্তিক গড় গ্রেড %) -->
+    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+        <h4 class="text-lg font-black text-slate-800 mb-6">এলাকাভিত্তিক গড় গ্রেড (%) পরিসংখ্যান</h4>
+        <div style="height: 400px;">
+            <canvas id="areaLineChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js Script -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // লাইন চার্ট (এলাকাভিত্তিক গড় গ্রেড %)
+    const areaCtx = document.getElementById('areaLineChart').getContext('2d');
+    const areaLabels = JSON.parse('{{ area_labels|safe }}');
+    const areaValues = JSON.parse('{{ area_values|safe }}');
+
+    new Chart(areaCtx, {
+        type: 'line',
+        data: {
+            labels: areaLabels,
+            datasets: [{
+                label: 'গড় গ্রেড (%)',
+                data: areaValues,
+                borderColor: '#B58A4A',
+                backgroundColor: 'rgba(181, 138, 74, 0.1)',
+                borderWidth: 3,
+                fill: true,
+                tension: 0.4,
+                pointRadius: 5,
+                pointBackgroundColor: '#B58A4A'
+            }]
+        },
+        options: {
+            maintainAspectRatio: false,
+            scales: {
+                y: { 
+                    beginAtZero: true, 
+                    max: 100,
+                    ticks: {
+                        callback: function(value) {
+                            return value + '%';
+                        }
+                    }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

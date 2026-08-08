@@ -477,6 +477,9 @@ def delete_bill_view(request, pk):
 # ==========================================
 @login_required
 def dashboard_view(request):
+    from_date = request.GET.get('from_date')
+    to_date = request.GET.get('to_date')
+
     if request.user.is_superuser:
         bills = BillEntry.objects.all()
         grades = GradeEntry.objects.all()
@@ -484,48 +487,54 @@ def dashboard_view(request):
         bills = BillEntry.objects.filter(user=request.user)
         grades = GradeEntry.objects.filter(user=request.user)
 
+    # তারিখ অনুযায়ী ফিল্টারিং লজিক
+    if from_date and to_date:
+        bills = bills.filter(date__range=[from_date, to_date])
+        grades = grades.filter(date__range=[from_date, to_date])
+
     total_jute_mon = bills.aggregate(Sum('jute_mon'))['jute_mon__sum'] or Decimal('0.0')
     total_bill_amount = sum(float(b.jute_mon or 0) * float(b.rate or 0) for b in bills)
     avg_bill_rate = bills.aggregate(avg_rate=Avg('rate'))['avg_rate'] or Decimal('0.0')
-    
     total_grade_mds = grades.aggregate(Sum('total_mds'))['total_mds__sum'] or Decimal('0.0')
 
-    # মাসিক চার্টের জন্য GradeEntry এর date এবং total_mds ব্যবহার করা হলো
-    monthly_data = defaultdict(float)
-    for g in grades:
-        if g.date:
-            month_key = g.date.strftime('%Y-%m')
-            monthly_data[month_key] += float(g.total_mds or 0)
+    # প্রতিটি এরিয়াভিত্তিক মোট গাড়ি/এন্ট্রি (Count) এবং গড় গ্রেড হিসাব
+    area_stats = defaultdict(lambda: {'count': 0, 'grade_sum': 0.0})
 
-    sorted_months = sorted(monthly_data.keys())
-    chart_labels = sorted_months
-    chart_values = [monthly_data[m] for m in sorted_months]
-
-    # এরিয়াভিত্তিক গড় গ্রেড হিসাব
-    area_grade_stats = defaultdict(lambda: {'c_sum': 0.0, 'count': 0})
     for g in grades:
         if g.area:
             area_name = g.area.strip()
-            pct_val = float(g.c_pct or 0) + float(g.d1_pct or 0) + float(g.d2_pct or 0) + float(g.e1_pct or 0) + float(g.e2_pct or 0) + float(g.smr_pct or 0)
-            area_grade_stats[area_name]['c_sum'] += pct_val
-            area_grade_stats[area_name]['count'] += 1
+            area_stats[area_name]['count'] += 1  # প্রতিটি গাড়ি বা লট কাউন্ট করা হলো
+            
+            total_pct = (
+                float(g.c_pct or 0) + 
+                float(g.d1_pct or 0) + 
+                float(g.d2_pct or 0) + 
+                float(g.e1_pct or 0) + 
+                float(g.e2_pct or 0) + 
+                float(g.smr_pct or 0)
+            )
+            area_stats[area_name]['grade_sum'] += total_pct
 
     area_labels = []
-    area_values = []
-    for area, data in area_grade_stats.items():
+    area_counts = []
+    area_avg_grades = []
+
+    for area, data in area_stats.items():
         area_labels.append(area)
-        avg_val = (data['c_sum'] / data['count']) if data['count'] > 0 else 0.0
-        area_values.append(round(avg_val, 2))
+        area_counts.append(data['count'])  # মোট গাড়ি বা লট সংখ্যা
+        avg_grade = (data['grade_sum'] / data['count']) if data['count'] > 0 else 0.0
+        area_avg_grades.append(round(avg_grade, 2))
 
     context = {
         'total_jute_mon': total_jute_mon,
         'total_bill_amount': total_bill_amount,
         'avg_bill_rate': round(avg_bill_rate, 2),
         'total_grade_mds': total_grade_mds,
-        'chart_labels': json.dumps(chart_labels),
-        'chart_values': json.dumps(chart_values),
         'area_labels': json.dumps(area_labels),
-        'area_values': json.dumps(area_values),
+        'area_counts': json.dumps(area_counts),         # গাড়ি বা লট সংখ্যা
+        'area_avg_grades': json.dumps(area_avg_grades), # গড় গ্রেড পার্সেন্টেজ
+        'from_date': from_date,
+        'to_date': to_date,
     }
     
     return render(request, 'bills/dashboard.html', context)

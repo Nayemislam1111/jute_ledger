@@ -3,16 +3,38 @@
 {% block content %}
 <div class="p-8">
     <div class="flex justify-between items-center mb-8">
-        <h2 class="text-2xl font-black text-slate-800">এরিয়াভিত্তিক গড় গ্রেড ড্যাশবোর্ড</h2>
+        <h2 class="text-2xl font-black text-slate-800">এরিয়াভিত্তিক গাড়ি ও গ্রেড ড্যাশবোর্ড</h2>
         <a href="{% url 'grade_entry' %}" class="bg-slate-900 text-white px-5 py-2 rounded-lg font-bold hover:bg-[#B58A4A] transition">
             <i class="fa-solid fa-house mr-2"></i> হোম (Grade Entry)
         </a>
     </div>
 
+    <!-- তারিখ অনুযায়ী ফিল্টার ফর্ম -->
+    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 mb-8">
+        <form method="GET" class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+            <div>
+                <label class="block text-sm font-bold text-slate-700 mb-1">শুরু তারিখ:</label>
+                <input type="date" name="from_date" value="{{ from_date }}" class="w-full border border-slate-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-[#B58A4A]">
+            </div>
+            <div>
+                <label class="block text-sm font-bold text-slate-700 mb-1">শেষ তারিখ:</label>
+                <input type="date" name="to_date" value="{{ to_date }}" class="w-full border border-slate-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-[#B58A4A]">
+            </div>
+            <div class="flex gap-2">
+                <button type="submit" class="bg-[#B58A4A] text-white px-6 py-2.5 rounded-lg font-bold hover:bg-amber-700 transition w-full">
+                    <i class="fa-solid fa-filter mr-2"></i> ফিল্টার করুন
+                </button>
+                <a href="{% url 'dashboard' %}" class="bg-slate-200 text-slate-700 px-4 py-2.5 rounded-lg font-bold hover:bg-slate-300 transition text-center">
+                    রিসেট
+                </a>
+            </div>
+        </form>
+    </div>
+
     <!-- সামারি কার্ড -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div class="bg-blue-600 rounded-2xl p-6 text-white shadow-lg">
-            <h5 class="text-sm opacity-80 font-bold mb-1">মোট পাট (গ্রেড মোট মণ)</h5>
+            <h5 class="text-sm opacity-80 font-bold mb-1">মোট গ্রেড (মণ)</h5>
             <h3 class="text-2xl font-black">{{ total_grade_mds }} মণ</h3>
         </div>
         <div class="bg-green-600 rounded-2xl p-6 text-white shadow-lg">
@@ -25,11 +47,11 @@
         </div>
     </div>
 
-    <!-- মেইন লাইন চার্ট (এলাকাভিত্তিক গড় গ্রেড %) -->
+    <!-- চার্ট সেকশন: এরিয়াভিত্তিক মোট গাড়ি/লট সংখ্যা -->
     <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
-        <h4 class="text-lg font-black text-slate-800 mb-6">এলাকাভিত্তিক গড় গ্রেড (%) পরিসংখ্যান</h4>
+        <h4 class="text-lg font-black text-slate-800 mb-6">এরিয়াভিত্তিক মোট গাড়ি / লট সংখ্যা (Count)</h4>
         <div style="height: 400px;">
-            <canvas id="areaLineChart"></canvas>
+            <canvas id="areaCountChart"></canvas>
         </div>
     </div>
 </div>
@@ -37,37 +59,28 @@
 <!-- Chart.js Script -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    // লাইন চার্ট (এলাকাভিত্তিক গড় গ্রেড %)
-    const areaCtx = document.getElementById('areaLineChart').getContext('2d');
+    const ctx = document.getElementById('areaCountChart').getContext('2d');
     const areaLabels = JSON.parse('{{ area_labels|safe }}');
-    const areaValues = JSON.parse('{{ area_values|safe }}');
+    const areaCounts = JSON.parse('{{ area_counts|safe }}');
 
-    new Chart(areaCtx, {
-        type: 'line',
+    new Chart(ctx, {
+        type: 'bar', // বার চার্ট দিয়ে খুব সহজেই কোন এলাকায় কয়টি গাড়ি/লট এসেছে তা দেখা যাবে
         data: {
             labels: areaLabels,
             datasets: [{
-                label: 'গড় গ্রেড (%)',
-                data: areaValues,
-                borderColor: '#B58A4A',
-                backgroundColor: 'rgba(181, 138, 74, 0.1)',
-                borderWidth: 3,
-                fill: true,
-                tension: 0.4,
-                pointRadius: 5,
-                pointBackgroundColor: '#B58A4A'
+                label: 'মোট গাড়ি / লট সংখ্যা',
+                data: areaCounts,
+                backgroundColor: '#B58A4A',
+                borderRadius: 8
             }]
         },
         options: {
             maintainAspectRatio: false,
             scales: {
                 y: { 
-                    beginAtZero: true, 
-                    max: 100,
+                    beginAtZero: true,
                     ticks: {
-                        callback: function(value) {
-                            return value + '%';
-                        }
+                        stepSize: 1
                     }
                 }
             }

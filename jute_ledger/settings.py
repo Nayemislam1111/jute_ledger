@@ -209,3 +209,4 @@ JAZZMIN_UI_TWEAKS = {
     "sidebar_nav_compact_style": False,
     "sidebar_nav_flat_style": False,
 }
+GOOGLE_API_KEY = "AQ.Ab8RN6J5mx7LWcCEaZE-PRYY74DkzytYD30V3pZ0RLulx0H-Hw"

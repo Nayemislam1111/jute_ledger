@@ -51,7 +51,7 @@
                             <span>Bill Entry</span>
                         </a>
 
-                        <!-- Dashboard Menu Item (Moved to Bottom) -->
+                        <!-- Dashboard Menu Item -->
                         <a href="{% url 'dashboard' %}" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-bold transition-all duration-200 group {% if request.resolver_match.url_name == 'dashboard' %} bg-[#B58A4A] text-white shadow-lg shadow-[#B58A4A]/20 {% else %} text-slate-400 hover:bg-slate-800 hover:text-white {% endif %}">
                             <i class="fa-solid fa-chart-pie text-base transition-transform group-hover:scale-110"></i> 
                             <span>Dashboard</span>
@@ -93,8 +93,76 @@
         </div>
 
         <!-- Main Content Area -->
-        <div class="flex-1 flex flex-col overflow-y-auto">
+        <div class="flex-1 flex flex-col overflow-y-auto relative">
             {% block content %}{% endblock %}
+
+            <!-- 🤖 Ask AI Floating Button -->
+            <div class="fixed bottom-6 right-6 z-50">
+                <button onclick="toggleAiModal()" class="bg-[#B58A4A] text-white w-14 h-14 rounded-full shadow-2xl flex items-center justify-center hover:bg-slate-900 transition-all duration-300">
+                    <i class="fa-solid fa-robot text-2xl"></i>
+                </button>
+            </div>
+
+            <!-- AI Chat Box Modal -->
+            <div id="aiModal" class="hidden fixed bottom-24 right-6 w-80 md:w-96 bg-white shadow-2xl rounded-2xl border border-slate-200 z-50 overflow-hidden flex flex-col">
+                <div class="bg-slate-900 text-white p-4 flex justify-between items-center">
+                    <h3 class="font-bold text-sm flex items-center gap-2"><i class="fa-solid fa-robot text-[#B58A4A]"></i> Akij AI Assistant</h3>
+                    <button onclick="toggleAiModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+                </div>
+                
+                <div id="chatBody" class="p-4 h-64 overflow-y-auto text-sm space-y-3 bg-slate-50 flex flex-col">
+                    <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-100 text-slate-700 self-start max-w-[85%]">
+                        হ্যালো! প্রজেক্টের যেকোনো তথ্য বা হিসাব সম্পর্কে আমাকে প্রশ্ন করতে পারেন।
+                    </div>
+                </div>
+
+                <div class="p-3 bg-white border-t border-slate-200 flex gap-2">
+                    <input type="text" id="userQuestion" placeholder="আপনার প্রশ্ন এখানে লিখুন..." class="flex-1 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#B58A4A]" onkeypress="if(event.key === 'Enter') askAi()">
+                    <button onclick="askAi()" class="bg-[#B58A4A] text-white px-4 py-2 rounded-lg font-bold hover:bg-slate-900 transition"><i class="fa-solid fa-paper-plane"></i></button>
+                </div>
+            </div>
+
+            <script>
+            function toggleAiModal() { 
+                document.getElementById('aiModal').classList.toggle('hidden'); 
+            }
+
+            async function askAi() {
+                const inputField = document.getElementById('userQuestion');
+                const question = inputField.value.trim();
+                if(!question) return;
+
+                const chatBody = document.getElementById('chatBody');
+
+                // ইউজারের মেসেজ চ্যাটবক্সে যোগ করা
+                chatBody.innerHTML += `<div class="bg-[#B58A4A] text-white p-3 rounded-xl shadow-sm self-end max-w-[85%]">${question}</div>`;
+                inputField.value = '';
+                chatBody.scrollTop = chatBody.scrollHeight;
+
+                // লোডিং মেসেজ দেখানো
+                const loadingId = 'loading-' + Date.now();
+                chatBody.innerHTML += `<div id="${loadingId}" class="bg-white p-3 rounded-xl shadow-sm border border-slate-100 text-slate-500 italic self-start">উত্তর তৈরি হচ্ছে...</div>`;
+                chatBody.scrollTop = chatBody.scrollHeight;
+
+                try {
+                    const response = await fetch('/ask-gemini/', {
+                        method: 'POST',
+                        body: JSON.stringify({question: question}),
+                        headers: {'Content-Type': 'application/json'}
+                    });
+                    const data = await response.json();
+                    
+                    // লোডিং মেসেজ রিমুভ করে আসল উত্তর বসানো
+                    document.getElementById(loadingId).remove();
+                    chatBody.innerHTML += `<div class="bg-white p-3 rounded-xl shadow-sm border border-slate-100 text-slate-700 self-start max-w-[85%]">${data.answer}</div>`;
+                } catch (err) {
+                    document.getElementById(loadingId).remove();
+                    chatBody.innerHTML += `<div class="bg-red-100 text-red-600 p-3 rounded-xl shadow-sm self-start max-w-[85%]">দুঃখিত, সংযোগে সমস্যা হয়েছে।</div>`;
+                }
+                chatBody.scrollTop = chatBody.scrollHeight;
+            }
+            </script>
+
         </div>
 
     </div>

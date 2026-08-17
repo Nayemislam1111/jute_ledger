@@ -24,6 +24,9 @@ urlpatterns = [
     # 📊 Dashboard Route
     path('dashboard/', views.dashboard_view, name='dashboard'),
 
+    # 🤖 AI Assistant Route
+    path('ask-gemini/', views.ask_gemini_view, name='ask_gemini'),
+
     # 🔑 Logout Route
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
 

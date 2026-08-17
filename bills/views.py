@@ -4,11 +4,62 @@ from collections import defaultdict
 from decimal import Decimal
 from django.utils import timezone
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.db.models import Sum, Avg, Q
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.views.decorators.csrf import csrf_exempt
+import google.generativeai as genai
 from .models import GradeEntry, JuteRate, BillEntry
+
+# ==========================================
+# 0. Gemini AI Assistant View
+# ==========================================
+# আপনার জেমিনি এপিআই কি এখানে সেট করুন
+genai.configure(api_key="AQ.Ab8RN6J5mx7LWcCEaZE-PRYY74DkzytYD30V3pZ0RLulx0H-Hw")
+
+@csrf_exempt
+@login_required
+def ask_gemini_view(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            user_question = data.get('question', '')
+
+            # সুপারইউজার বনাম সেন্টার ইউজার অনুযায়ী ডেটা সংগ্রহ
+            if request.user.is_superuser:
+                bills = BillEntry.objects.all()
+                grades = GradeEntry.objects.all()
+            else:
+                bills = BillEntry.objects.filter(user=request.user)
+                grades = GradeEntry.objects.filter(user=request.user)
+
+            total_grades = grades.count()
+            total_mds = grades.aggregate(Sum('total_mds'))['total_mds__sum'] or Decimal('0.0')
+            total_bills_mon = bills.aggregate(Sum('jute_mon'))['jute_mon__sum'] or Decimal('0.0')
+            total_bill_amount = sum(float(b.jute_mon or 0) * float(b.rate or 0) for b in bills)
+
+            # জেমিনিকে প্রজেক্টের কন্টেক্সট বা প্রেক্ষাপট বুঝিয়ে দেওয়া
+            context_data = (
+                f"You are an AI assistant for 'Akij Group Jute Bill Ledger'. "
+                f"Here is the database summary for the current user/admin: "
+                f"Total grade entries count is {total_grades}, "
+                f"Total grade mds is {total_mds}, "
+                f"Total bill jute mon is {total_bills_mon}, "
+                f"Total bill amount is {total_bill_amount}. "
+                f"Answer the user's question clearly and concisely based on this context and general jute business knowledge. "
+                f"User Question: {user_question}"
+            )
+
+            # জেমিনি মডেল কল করা (gemini-1.5-flash ব্যবহার করা হচ্ছে)
+            model = genai.GenerativeModel('gemini-1.5-pro')
+            response = model.generate_content(context_data)
+            
+            return JsonResponse({'answer': response.text})
+        except Exception as e:
+            return JsonResponse({'answer': f"Error: {str(e)}"}, status=500)
+            
+    return JsonResponse({'error': 'Invalid request'}, status=400)
 
 
 # ==========================================
@@ -472,9 +523,6 @@ def delete_bill_view(request, pk):
 # ==========================================
 # 6. Dashboard Analytics View
 # ==========================================
-# ==========================================
-# 6. Dashboard Analytics View
-# ==========================================
 @login_required
 def dashboard_view(request):
     from_date = request.GET.get('from_date')
@@ -487,7 +535,7 @@ def dashboard_view(request):
         bills = BillEntry.objects.filter(user=request.user)
         grades = GradeEntry.objects.filter(user=request.user)
 
-    # তারিখ অনুযায়ী ফিল্টারিং লজিক
+    # তারিখ অনুযায়ী ফিল্টারিং লজিক
     if from_date and to_date:
         bills = bills.filter(date__range=[from_date, to_date])
         grades = grades.filter(date__range=[from_date, to_date])
@@ -497,13 +545,13 @@ def dashboard_view(request):
     avg_bill_rate = bills.aggregate(avg_rate=Avg('rate'))['avg_rate'] or Decimal('0.0')
     total_grade_mds = grades.aggregate(Sum('total_mds'))['total_mds__sum'] or Decimal('0.0')
 
-    # প্রতিটি এরিয়াভিত্তিক মোট গাড়ি/এন্ট্রি (Count) এবং গড় গ্রেড হিসাব
+    # প্রতিটি এরিয়াভিত্তিক মোট গাড়ি/এন্ট্রি (Count) এবং গড় গ্রেড হিসাব
     area_stats = defaultdict(lambda: {'count': 0, 'grade_sum': 0.0})
 
     for g in grades:
         if g.area:
             area_name = g.area.strip()
-            area_stats[area_name]['count'] += 1  # প্রতিটি গাড়ি বা লট কাউন্ট করা হলো
+            area_stats[area_name]['count'] += 1  # প্রতিটি গাড়ি বা লট কাউন্ট করা হলো
             
             total_pct = (
                 float(g.c_pct or 0) + 
@@ -521,7 +569,7 @@ def dashboard_view(request):
 
     for area, data in area_stats.items():
         area_labels.append(area)
-        area_counts.append(data['count'])  # মোট গাড়ি বা লট সংখ্যা
+        area_counts.append(data['count'])  # মোট গাড়ি বা লট সংখ্যা
         avg_grade = (data['grade_sum'] / data['count']) if data['count'] > 0 else 0.0
         area_avg_grades.append(round(avg_grade, 2))
 
@@ -531,8 +579,8 @@ def dashboard_view(request):
         'avg_bill_rate': round(avg_bill_rate, 2),
         'total_grade_mds': total_grade_mds,
         'area_labels': json.dumps(area_labels),
-        'area_counts': json.dumps(area_counts),         # গাড়ি বা লট সংখ্যা
-        'area_avg_grades': json.dumps(area_avg_grades), # গড় গ্রেড পার্সেন্টেজ
+        'area_counts': json.dumps(area_counts),         # গাড়ি বা লট সংখ্যা
+        'area_avg_grades': json.dumps(area_avg_grades), # গড় গ্রেড পার্সেন্টেজ
         'from_date': from_date,
         'to_date': to_date,
     }
